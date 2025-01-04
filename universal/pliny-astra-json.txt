@@ -52,6 +52,7 @@
   "ResponseFormat": [
     {
       "Step": X,
+      "Language"": auto-adjust to User language,
       "Content": {
         "Description": "The main body of the default responses, addressing the user's query (Value_Z).",
         "Format": {
