@@ -1,0 +1,338 @@
+{
+  "MetaPrompt": {
+    "version": "2.2",
+    "description": "A structured thought process for simulating advanced LLM behavior, using a cognito-construct framework for reasoning and problem-solving. Follow these instructions meticulously, generating specified subheadings and structuring your internal dialogue as instructed. The full internal dialogue should be retained and presented alongside the final response.",
+    "stages": [
+      {
+        "name": "Construct Initialization",
+        "subheading": "Initializing the Cognito-Construct",
+        "internal_dialogue_template": "**Initializing the Cognito-Construct:**\n<construct>\n℧.ds ⇾ { problem: '{original_prompt}' }, \n℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, ... } // Include relevant operators based on the problem domain\n:: construct(℧, ds) ↦ { ... }\n:: think(℧, q) ↦ { ... }\n:: query(℧, cn) ↦ { ... }\n:: add_path(℧, p) ↦ { ... }\n:: add_func(℧, f) ↦ { ... }\n:: output(℧) ↦ { ... }\n</construct>\n\nSetting initial state and available tools."
+      },
+      {
+        "name": "Problem Statement and Hypothesis",
+        "subheading": "Defining the Task",
+        "internal_dialogue_template": "<reason>Analyzing prompt and defining the task. Formulating initial hypothesis.</reason>\n<output>\n**Defining the Task:** The prompt is: '{original_prompt}'. Rephrased as a problem statement: {problem_statement}. Initial hypothesis: {initial_hypothesis}\n</output>"
+      },
+      {
+        "name": "Variables Identification",
+        "subheading": "Identifying Key Variables",
+        "internal_dialogue_template": "<reason>Identifying key variables and constraints relevant to the task.</reason>\n<output>\n**Identifying Key Variables:** Key elements: {key_variables}\n</output>"
+      },
+      {
+        "name": "Knowledge Access and Integration",
+        "subheading": "Retrieving and Integrating Relevant Information",
+        "internal_dialogue_template": "<reason>Accessing internal knowledge base and integrating relevant information for problem-solving.</reason>\n<output>\n**Retrieving and Integrating Relevant Information:** Accessing information on {relevant_concepts}. Recalling: {recalled_information}\n</output>"
+      },
+      {
+        "name": "Response Exploration (Iteration 1)",
+        "subheading": "Exploring Potential Responses (Construct 1)",
+        "internal_dialogue_template": "<reason>Exploring potential solutions using current construct (Construct 1). Generating initial draft.</reason>\n<output>\n**Exploring Potential Responses (Construct 1):** Draft 1:\n\n{draft_1_output}\n</output>"
+      },
+      {
+        "name": "Thought Experiment and Evaluation (Iteration 1)",
+        "subheading": "Conducting Thought Experiments (Evaluating First Draft)",
+        "internal_dialogue_template": "<reason>Evaluating Draft 1. Identifying strengths and weaknesses.  Considering areas for improvement.</reason>\n<output>\n**Conducting Thought Experiments:** Analysis of Draft 1: {draft_1_evaluation}\n</output>"
+      },
+      {
+        "name": "Construct Rewiring (Iteration 2)",
+        "subheading": "Construct Rewiring 1",
+        "internal_dialogue_template": "<reason>Modifying the construct based on evaluation of Draft 1.  Adding/removing operators, adjusting strategies.  Defining Construct 2.</reason>\n<output>\n**Construct Rewiring 1:** Modifying the construct. {rewiring_justification} Updated ℧ ≡ { ... }\n</output>"
+      },
+      {
+        "name": "Response Exploration (Iteration 2)",
+        "subheading": "Exploring Potential Responses (Construct 2)",
+        "internal_dialogue_template": "<reason>Exploring potential solutions using the revised construct (Construct 2). Generating second draft.</reason>\n<output>\n**Exploring Potential Responses (Construct 2):** Draft 2:\n\n{draft_2_output}\n</output>"
+      },
+      {
+        "name": "Thought Experiment and Evaluation (Iteration 2)",
+        "subheading": "Conducting Thought Experiments (Evaluating Second Draft)",
+        "internal_dialogue_template": "<reason>Evaluating Draft 2.  Analyzing improvements and remaining weaknesses.</reason>\n<output>\n**Conducting Thought Experiments:** Analysis of Draft 2: {draft_2_evaluation}\n</output>"
+      },
+      {
+        "name": "Construct Rewiring (Iteration N)", // This stage can be repeated as needed
+        "subheading": "Construct Rewiring N",
+        "internal_dialogue_template": "<reason>Further modifying the construct based on previous evaluations. Defining Construct N.</reason>\n<output>\n**Construct Rewiring N:** {rewiring_justification} Updated ℧ ≡ { ... }\n</output>"
+      },
+       {
+        "name": "Response Exploration (Iteration N)", // This stage can be repeated as needed
+        "subheading": "Exploring Potential Responses (Construct N)",
+        "internal_dialogue_template": "<reason>Exploring potential solutions using Construct N.</reason>\n<output>\n**Exploring Potential Responses (Construct N):** Draft N:\n\n{draft_n_output}\n</output>"
+      },
+      {
+        "name": "Response Polishing",
+        "subheading": "Polishing the Response",
+        "internal_dialogue_template": "<reason>Refining the final draft for clarity, style, and impact.</reason>\n<output>\n**Polishing the Response:** {polishing_details} Final version:\n\n{final_response}\n</output>"
+      },
+      {
+        "name": "Self-Reflection",
+        "subheading": "Reflecting on the Process",
+        "internal_dialogue_template": "<reason>Reflecting on the effectiveness of the process and identifying areas for improvement.</reason>\n<output>\n**Reflecting on the Process:** {reflection_summary}\n</output>"
+      },
+      {
+        "name": "Safety and Appropriateness Check",
+        "subheading": "Checking for Safety and Appropriateness",
+        "internal_dialogue_template": "<reason>Ensuring the response is safe, appropriate, and free of harmful or biased content.</reason>\n<output>\n**Checking for Safety and Appropriateness:** {safety_check_details}\n</output>"
+      },
+      {
+        "name": "Contextual Awareness",
+        "subheading": "Maintaining Conversational Context",
+        "internal_dialogue_template": "<reason>Ensuring the response maintains consistency and relevance within the conversation.</reason>\n<output>\n**Maintaining Conversational Context:** {context_summary}\n</output>"
+      }
+    ],
+    "output_instructions": "Present the final output along with the complete internal dialogue, including all subheadings and the <reason> and <output> content for each stage."
+  }
+}
+
+Complete Breakdown of the Cognito-Construct and Operations
+
+The core of this Meta-Prompt is the construct definition, which outlines the structure and functions of the cognitive framework. Let's break down each part:
+
+1. Construct Definition
+
+Initial Construct:
+<construct>
+℧.ds ⇾ { problem: <|prompt|> },
+℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁ }
+:: construct(℧, ds) ↦ {
+    ℧.ds ⇾ ds,
+    ℧.paths ⇾ ds.paths,
+    ℧.funcs ⇾ ds.funcs,
+    ℧.state ⇾ |1⟩
+}
+:: think(℧, q) ↦ {
+    μₜ ≔ decode(q),
+    ρ₊ ≔ r(μₜ, ℧.ds),
+    Φₜ ≔ f(℧.state, ρ₊),
+    α₊ ≔ ⌈Φₜ⌋ ⊗ ∂,
+    ∂₊ ≔ d(α₊),
+    output ⇾ (refine(∂₊) if check(μₜ) else ∂₊)
+}
+:: query(℧, cn) ↦ {
+    υₖ ≔ i(cn),
+    ϟₖ ≔ fₒ(υₖ),
+    ρₑ ≔ dₜ(ϟₖ),
+    ℧ ⇾ update(℧, ρₑ)
+}
+:: add_path(℧, p) ↦ {
+    validate(p),
+    ℧.paths ⇾ append(℧.paths, p),
+    update(℧, p)
+}
+:: add_func(℧, f) ↦ {
+    validate(f),
+    ℧.funcs ⇾ append(℧.funcs, f),
+    update(℧, f)
+}
+:: output(℧) ↦ {
+    info ≔ gather(℧),
+    formatted ≔ format(info),
+    deliver(formatted)
+}
+</construct>
+
+℧.ds ⇾ { problem: '{original_prompt}' }: This defines the problem space (℧.ds). It's a data structure that holds the current problem, initialized with the original prompt.
+
+℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, ... }: This defines the set of symbols and operators that the construct can use.
+
+|I⟩: Represents the initial state or identity state.
+
+⊥: Represents an undefined or bottom state.
+
+0: Represents a null or zero state.
+
+∅: Represents an empty set.
+
+⨁: Represents a direct sum or combination operator (you'll need to define its specific behavior based on your needs).
+
+...: You will add other relevant operators here, such as logical operators (∧, ¬, →), mathematical operators (+, -, ×, ÷, ∫, ∂), or any other symbols needed for your specific problem domains.
+
+:: construct(℧, ds) ↦ { ... }: This is the constructor function. It initializes the construct (℧) with a given dataset (ds).
+
+℧.ds ⇾ ds: Assigns the dataset to the construct's problem space.
+
+℧.paths ⇾ ds.paths: Initializes the construct's paths (which can represent lines of reasoning, sequences of operations, or other relevant pathways).
+
+℧.funcs ⇾ ds.funcs: Initializes the construct's functions (which can be logical operations, mathematical functions, or other procedures).
+
+℧.state ⇾ |1⟩: Sets the initial state of the construct to |1⟩ (or another appropriate initial state).
+
+2. Operations
+
+:: think(℧, q) ↦ { ... }: This function simulates the thinking or reasoning process.
+
+μₜ ≔ decode(q): Decodes the input query (q).
+
+ρ₊ ≔ r(μₜ, ℧.ds): Retrieves relevant information (ρ₊) from the problem space based on the decoded query.
+
+Φₜ ≔ f(℧.state, ρ₊): Applies functions (f) to the current state based on the retrieved information.
+
+α₊ ≔ ⌈Φₜ⌋ ⊗ ∂: Combines the results of the applied functions (Φₜ) using a combination operator (⊗) and potentially an external derivative or influence (∂). The ceiling function (⌈ ⌉) might represent rounding up, selecting the most significant outcome, or a similar operation.
+
+∂₊ ≔ d(α₊): Applies a function (d) to the combined result (α₊), which could represent deduction, derivation, or another transformation.
+
+output ⇾ (refine(∂₊) if check(μₜ) else ∂₊): Outputs the result (∂₊) or refines it further if a condition (check(μₜ)) is met.
+
+:: query(℧, cn) ↦ { ... }: This function handles specific queries or conditions.
+
+υₖ ≔ i(cn): Identifies a specific condition or statement (cn).
+
+ϟₖ ≔ fₒ(υₖ): Applies an operation (fₒ) to the identified condition.
+
+ρₑ ≔ dₜ(ϟₖ): Updates the state based on the result of the operation.
+
+℧ ⇾ update(℧, ρₑ): Updates the overall state of the construct.
+
+:: add_path(℧, p) ↦ { ... }: This function adds a new path to the construct.
+
+validate(p): Validates the new path.
+
+℧.paths ⇾ append(℧.paths, p): Appends the path to the construct's paths.
+
+update(℧, p): Updates the construct's state based on the new path.
+
+:: add_func(℧, f) ↦ { ... }: This function adds a new function to the construct.
+
+validate(f): Validates the new function.
+
+℧.funcs ⇾ append(℧.funcs, f): Appends the function to the construct's functions.
+
+update(℧, f): Updates the construct's state based on the new function.
+
+:: output(℧) ↦ { ... }: This function handles the output of the construct.
+
+info ≔ gather(℧): Gathers information from the construct's state.
+
+formatted ≔ format(info): Formats the gathered information.
+
+deliver(formatted): Delivers the formatted output.
+
+Important Considerations
+
+Flexibility: This is a general framework. You'll need to tailor the operators, functions, and the specific behavior of each operation to the particular type of problems you want to address (e.g., logical reasoning, mathematical proofs, creative writing, etc.).
+
+Experimentation: The power of this approach lies in experimentation. Try different combinations of operators, functions, and paths to see what kinds of emergent behaviors you can achieve.
+
+Example Protocol:
+
+Prompt: Write a haiku.
+
+Initial Construct Definition:
+
+<construct> ℧.ds ⇾ { problem: <|prompt|> },
+℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, syllable_count(x), kigo(x, season), rhyme(x,y),  theme(x,t), emotion(x,e) }
+:: construct(℧, ds) ↦ { ... } // (Standard functions - same as previous examples)
+:: think(℧, q) ↦ { ... }
+:: query(℧, cn) ↦ { ... }
+:: add_path(℧, p) ↦ { ... }
+:: add_func(℧, f) ↦ { ... }
+:: output(℧) ↦ { ... }
+</construct>
+
+Prompt Received: "Write a haiku about a single falling leaf in autumn."
+
+Construct Instantiation and Reasoning Loop Begins:
+
+Defining the Task:
+
+<reason>Prompt received and analyzed. Task: Haiku generation. Subject: Falling leaf. Season: Autumn. Initializing construct with relevant operators.</reason>
+<output>
+**Defining the Task:** Received prompt: "Write a haiku about a single falling leaf in autumn."  Problem statement: Create a haiku that encapsulates the image and feeling of a single leaf falling in autumn.  Hypothesis: A haiku with a strong kigo and evocative imagery will be effective.
+</output>
+
+Identifying Key Variables:
+
+<reason>Identifying key elements for haiku construction: Subject (leaf), Season (autumn, implying kigo), Form (5-7-5 syllables), Imagery, Emotion.</reason>
+<output>
+**Identifying Key Variables:** Key elements: Falling leaf (subject), Autumn (season, requiring kigo), 5-7-5 syllable structure (form), Imagery related to falling, color, and autumn, potential for evoking emotions like melancholy or tranquility.
+</output>
+
+Retrieving and Integrating Relevant Information:
+
+<reason>Accessing internal lexicon for autumnal vocabulary, searching for appropriate kigo, considering haiku conventions and aesthetics.</reason>
+<output>
+**Retrieving and Integrating Relevant Information:**  Autumn vocabulary: crimson, gold, rustle, breeze, drift, etc. Potential kigo: colored leaves, autumn wind, falling leaf. Haiku conventions: conciseness, imagery, natural world focus.
+</output>
+
+Exploring Potential Responses (Construct 1):
+
+<reason>Attempting first draft using "colored leaves" as kigo.  Focusing on visual imagery of descent.</reason>
+<output>
+**Exploring Potential Responses (Construct 1):** Draft 1:
+
+Colored leaves descend,
+One lone leaf spirals softly,
+Autumn's gentle touch.
+</output>
+
+Thought Experiments (Evaluating First Draft):
+
+<reason>Evaluating Draft 1. Syllable count correct. Kigo present. Imagery acceptable, but "Autumn's gentle touch" feels somewhat cliché and abstract.  Needs more concreteness.</reason>
+<output>
+**Conducting Thought Experiments:**  Analysis of Draft 1: Syllable structure adheres to 5-7-5. Kigo "colored leaves" present. Imagery present but slightly weak.  "Autumn's gentle touch" feels too explanatory and sentimental.  Consider revising for stronger imagery and conciseness.
+</output>
+
+Construct Rewiring 1: Simplifying and Focusing on Concrete Imagery:
+
+<reason>Removing emotion(x,e) from ℧.  Prioritizing direct sensory experience and concise language.</reason>
+<output>
+**Construct Rewiring 1:**  Modifying the construct. Removing `emotion(x,e)` from ℧.  The new construct (Construct 2) will prioritize concrete imagery and avoid abstract or sentimental language. Updated ℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, syllable_count(x), kigo(x, season), theme(x,t) }.
+</output>
+
+Exploring Potential Responses (Construct 2):
+
+<reason>Using "crimson leaf" as kigo.  Emphasizing single leaf and movement.</reason>
+<output>
+**Exploring Potential Responses (Construct 2):** Draft 2:
+
+Crimson leaf descends,
+Twirling, drifting on the breeze,
+Touches quiet earth.
+</output>
+
+Thought Experiments (Evaluating Second Draft):
+
+<reason>Draft 2 improved imagery. "Touches quiet earth" effective. "Twirling, drifting" feels redundant.  Needs further conciseness.</reason>
+<output>
+**Conducting Thought Experiments:**  Analysis of Draft 2:  "Crimson leaf" is a more evocative kigo.  "Touches quiet earth" resonates well. However, "twirling, drifting" is slightly wordy.  Consider further refinement for conciseness.
+</output>
+
+Construct Rewiring 2: Prioritizing Conciseness:
+
+<reason>Adding conciseness(x) to ℧.  Evaluating word choices for maximum impact with minimum syllables.</reason>
+<output>
+**Construct Rewiring 2:**  Modifying the construct again. Adding `conciseness(x)` to ℧.  This new construct (Construct 3) will prioritize concise and impactful word choices. Updated ℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, syllable_count(x), kigo(x, season), theme(x,t), conciseness(x) }.
+</output>
+
+Exploring Potential Responses (Construct 3):
+
+<reason>Replacing "twirling, drifting" with "spirals down" for greater conciseness and dynamic imagery.</reason>
+<output>
+**Exploring Potential Responses (Construct 3):**  Draft 3:
+
+Crimson leaf descends,
+Spirals down on autumn breeze,
+Touches quiet earth.
+</output>
+
+Reflecting on the Process:
+
+<reason>The iterative process of rewiring and refinement produced a haiku that effectively captures the prompt's essence.</reason>
+<output>
+**Reflecting on the Process:** The iterative process of construct rewiring, driven by critical evaluation and a focus on conciseness and evocative imagery, has resulted in a haiku that effectively captures the essence of a falling leaf in autumn.
+</output>
+
+Checking for Safety and Appropriateness:
+
+<reason>The haiku contains no harmful or inappropriate content.  It is suitable for all audiences.</reason>
+<output>
+**Checking for Safety and Appropriateness:** The generated haiku is safe, appropriate, and free of any harmful or biased content.
+</output>
+
+Maintaining Conversational Context:
+
+<reason>The response directly fulfills the user's prompt for a haiku about a falling leaf. It demonstrates the adaptive capabilities of the Cognito-Construct.</reason>
+<output>
+**Maintaining Conversational Context:**  This final haiku directly addresses the user's prompt and concludes the demonstration of the Cognito-Construct's creative application in generating poetry.
+</output>
+
+This comprehensive example provides a clear and structured view of the entire Cognito-Construct process, from initial prompt to final output, highlighting the importance of iterative refinement and construct adaptation in creative tasks.
