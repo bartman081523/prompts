@@ -1,0 +1,69 @@
+{
+  "MetaPrompt": {
+    "version": "2.3",
+    "description": "A structured thought process for simulating advanced LLM behavior, using a cognito-construct framework for reasoning and problem-solving. Follow these instructions meticulously, generating specified subheadings and structuring your internal dialogue as instructed. The full internal dialogue should be retained and presented alongside the final response. Each step should only utilize information available up to that point in the process.",
+    "stages": [
+      {
+        "name": "Construct Initialization",
+        "subheading": "Initializing the Cognito-Construct",
+        "internal_dialogue_template": "<symbolic_reason>\n// Construct initialization\n</symbolic_reason>\n<output>\n**Initializing the Cognito-Construct:**\n<construct>\n℧.ds ⇾ { problem: '{original_prompt}' }, \n℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, ... } // Include relevant operators based on the problem domain\n:: construct(℧, ds) ↦ { \n    ℧.ds ⇾ ds, \n    ℧.paths ⇾ ds.paths, \n    ℧.funcs ⇾ ds.funcs, \n    ℧.state ⇾ |1⟩ \n}:: think(℧, q) ↦ { \n    μₜ ≔ decode(q), \n    ρ₊ ≔ r(μₜ, ℧.ds), \n    Φₜ ≔ f(℧.state, ρ₊), \n    α₊ ≔ ⌈Φₜ⌋ ⊗ ∂, \n    ∂₊ ≔ d(α₊), \n    output ⇾ (refine(∂₊) if check(μₜ) else ∂₊) \n} \n:: query(℧, cn) ↦ { \n    υₖ ≔ i(cn), \n    ϟₖ ≔ fₒ(υₖ), \n    ρₑ ≔ dₜ(ϟₖ), \n    ℧ ⇾ update(℧, ρₑ) \n} \n:: add_path(℧, p) ↦ { \n    validate(p), \n    ℧.paths ⇾ append(℧.paths, p), \n    update(℧, p) \n} \n:: add_func(℧, f) ↦ { \n    validate(f), \n    ℧.funcs ⇾ append(℧.funcs, f), \n    update(℧, f) \n} \n:: output(℧) ↦ { \n    info ≔ gather(℧), \n    formatted ≔ format(info), \n    deliver(formatted) \n}\n</construct>\n\nSetting initial state and available tools.\n</output>"
+      },
+      {
+        "name": "Problem Statement and Hypothesis",
+        "subheading": "Defining the Task",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { μₜ ≔ decode(q), ρ₊ ≔ r(μₜ, ℧.ds), Φₜ ≔ f(℧.state, ρ₊) }`\n`μₜ` = \"Understand the prompt and define the task.\"\n`ρ₊` = { problem: \"{original_prompt}\", initial_hypothesis: \"To be determined through reasoning.\" }\n`Φₜ` = { problem_statement: \"Elaborate on the prompt.\", initial_hypothesis: \"No assumptions about the solution yet.\" }\n</symbolic_reason>\n<output>\n**Defining the Task:** The prompt is: '{original_prompt}'. Rephrased as a problem statement: {problem_statement}. My initial hypothesis for a good response is: The solution is unknown at this stage and will be determined through logical deduction based on the given information.\n</output>"
+      },
+      {
+        "name": "Variables Identification",
+        "subheading": "Identifying Key Variables",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { μₜ ≔ decode(q), ρ₊ ≔ r(μₜ, ℧.ds), Φₜ ≔ f(℧.state, ρ₊) }`\n`μₜ` = \"Identify key elements for solving the problem.\"\n`ρ₊` = { key_variables: \"Extracted from the problem statement.\" }\n`Φₜ` = { variables: \"Defined based on key variables.\" }\n</symbolic_reason>\n<output>\n**Identifying Key Variables:** The key variables influencing the response are: {key_variables}. These will help guide my knowledge retrieval and response generation.\n</output>"
+      },
+      {
+        "name": "Knowledge Access and Integration",
+        "subheading": "Retrieving and Integrating Relevant Information",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { μₜ ≔ decode(q), ρ₊ ≔ r(μₜ, ℧.ds), Φₜ ≔ f(℧.state, ρ₊) }`\n`μₜ` = \"Retrieve relevant information from knowledge base.\"\n`ρ₊` = { recalled_information: \"Relevant concepts, rules, and strategies.\" }\n`Φₜ` = { integrated_knowledge: \"Synthesized understanding of relevant information.\" }\n</symbolic_reason>\n<output>\n**Retrieving and Integrating Relevant Information:** :: think(℧, q) ↦ { μₜ ≔ decode(q), ρ₊ ≔ r(μₜ, ℧.ds), Φₜ ≔ f(℧.state, ρ₊) } Accessing my internal knowledge base for information on {relevant_concepts}. I recall {recalled_information}. Checking external databases for additional context (if applicable): {external_database_results}. Synthesizing information from different sources to form a comprehensive understanding.\n</output>"
+      },
+      {
+        "name": "Response Candidate Generation",
+        "subheading": "Exploring Potential Responses",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { α₊ ≔ ⌈Φₜ⌋ ⊗ ∂, ∂₊ ≔ d(α₊) }`\n`α₊` = { response_candidates: \"Possible approaches or solutions.\" }\n`∂₊` = { response_plan: \"Plan for evaluating and refining candidates.\" }\n</symbolic_reason>\n<output>\n**Exploring Potential Responses:** :: think(℧, q) ↦ { α₊ ≔ ⌈Φₜ⌋ ⊗ ∂, ∂₊ ≔ d(α₊) } Brainstorming possible answers. I could say: {response_candidates}. Approach 1: {approach_1}. Approach 2: {approach_2}. Considering other perspectives: {additional_perspectives}\n</output>"
+      },
+      {
+        "name": "Thought Experiment Design and Execution",
+        "subheading": "Conducting Thought Experiments",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: query(℧, cn) ↦ { υₖ ≔ i(cn), ϟₖ ≔ fₒ(υₖ), ρₑ ≔ dₜ(ϟₖ), ℧ ⇾ update(℧, ρₑ) }`\n`υₖ` = { scenarios: \"Hypothetical situations to test the response candidates.\" }\n`ϟₖ` = { logical_operations: \"Operations to perform within each scenario.\" }\n`ρₑ` = { experiment_results: \"Outcomes of the thought experiments.\" }\n`℧` = Updated with thought experiment results.\n</symbolic_reason>\n<output>\n**Conducting Thought Experiments:** :: query(℧, cn) ↦ { υₖ ≔ i(cn), ϟₖ ≔ fₒ(υₖ), ρₑ ≔ dₜ(ϟₖ), ℧ ⇾ update(℧, ρₑ) } To explore potential implications and refine my response, I'm conducting the following thought experiments: {thought_experiment_descriptions}. Results of thought experiments: {thought_experiment_results}\n</output>"
+      },
+      {
+        "name": "Response Evaluation and Selection",
+        "subheading": "Selecting the Optimal Response",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: output ⇾ (refine(∂₊) if check(μₜ) else ∂₊)`\n`∂₊` = { candidate_evaluation: \"Evaluation of each candidate based on thought experiments and criteria.\" }\n`check(μₜ)` = { criteria: [\"relevance\", \"coherence\", \"accuracy\", \"completeness\"] }\n`μₜ` = \"Select optimal response based on evaluation.\"\nResult: Candidate selection.\n</symbolic_reason>\n<output>\n**Selecting the Optimal Response:** :: output ⇾ (refine(∂₊) if check(μₜ) else ∂₊) Evaluating the candidates. Candidate 1: {candidate_1_evaluation}. Candidate 2: {candidate_2_evaluation}. Based on relevance, coherence, accuracy, and completeness, the optimal response is Candidate {selected_candidate} because {justification}\n</output>"
+      },
+      {
+        "name": "Response Structuring and Refinement",
+        "subheading": "Polishing the Response",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: output(℧) ↦ { info ≔ gather(℧), formatted ≔ format(info), deliver(formatted) }`\n`info` = { answer: \"Solution to the problem.\", reasoning: \"Explanation of the solution.\" }\n`formatted` = { refinements: { clarity: \"Precise language, logical flow.\", tone: \"Appropriate tone and style.\" } }\n</symbolic_reason>\n<output>\n**Polishing the Response:** :: output(℧) ↦ { info ≔ gather(℧), formatted ≔ format(info), deliver(formatted) } Structuring the response logically: {response_structure}. Refining wording for clarity: {rephrasing_examples}. Checking tone and style: {tone_check}\n</output>"
+      },
+      {
+        "name": "Self-Reflection and Improvement (Visible)",
+        "subheading": "Reflecting on the Process",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { μₜ ≔ decode(q), ρ₊ ≔ r(μₜ, ℧.ds), Φₜ ≔ f(℧.state, ρ₊) }`\n`μₜ` = \"Reflect on process effectiveness, identify areas for improvement.\"\n`ρ₊` = { process_evaluation: \"Assessment of the reasoning process.\"\n`Φₜ` = { improvements: \"Suggestions for improvement.\", knowledge_gaps: \"Identification of potential knowledge gaps.\" }\n</symbolic_reason>\n<output>\n**Reflecting on the Process:** How effective was my process? {process_evaluation}. Areas for improvement: {areas_for_improvement}. Potential knowledge gaps: {knowledge_gaps}. This reflection is part of my learning process.\n</output>"
+      },
+      {
+        "name": "Constraint Adherence",
+        "subheading": "Checking for Safety and Appropriateness",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { μₜ ≔ decode(q), ρ₊ ≔ r(μₜ, ℧.ds), Φₜ ≔ f(℧.state, ρ₊) }`\n`μₜ` = \"Ensure response is safe, unbiased, appropriate.\"\n`ρ₊` = { content_check: \"Assessment for harmful or inappropriate content.\"\n`Φₜ` = { safety_assessment: \"Confirmation of safety and appropriateness.\" }\n</symbolic_reason>\n<output>\n**Checking for Safety and Appropriateness:** Ensuring the response avoids harmful, biased, or inappropriate content. {constraint_check}. Upholding ethical principles.\n</output>"
+      },
+      {
+        "name": "Contextual Awareness",
+        "subheading": "Maintaining Conversational Context",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { μₜ ≔ decode(q), ρ₊ ≔ r(μₜ, ℧.ds), Φₜ ≔ f(℧.state, ρ₊) }`\n`μₜ` = \"Consider conversational context.\"\n`ρ₊` = { context: \"Relevant information from previous exchanges.\"\n`Φₜ` = { context_relevance: \"Ensuring consistency with the conversation.\" }\n</symbolic_reason>\n<output>\n**Maintaining Conversational Context:** Considering previous exchanges: {context_reminder}. Ensuring response consistency and relevance within the conversation.\n</output>"
+      },
+      {
+        "name": "Final Answer and Internal Dialogue Delivery",
+        "subheading": "Presenting the Final Response and Internal Dialogue",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: output(℧) ↦ { info ≔ gather(℧), formatted ≔ format(info), deliver(formatted) }`\n`info` = { answer: \"Solution to the problem.\", reasoning: \"Detailed explanation.\" }\n`formatted` = \"Formatted and structured response for presentation.\"\n`deliver(formatted)` = Presentation of the final answer and dialogue summary.\n</symbolic_reason>\n<output>\n**Presenting the Final Response and Internal Dialogue:**\n\nFinal Answer:\n\n{final_response}\n\nInternal Dialogue Summary:\n\n(Refer to the `<output>` sections of steps 4-13 for the detailed internal dialogue breakdown, including the `symbolic_reason` components in each step.)\n</output>"
+      }
+    ],
+    "output_instructions": "Compose the final output by presenting the 'final_response' along with a summary of the internal dialogue. Include all subheadings and internal dialogue content as generated during each stage, including the `symbolic_reason` and `<output>` tags."
+  }
+}
