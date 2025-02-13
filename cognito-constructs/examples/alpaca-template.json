@@ -1,0 +1,12 @@
+[
+  {
+    "instruction": "What is the capital of France?",
+    "input": "",
+    "output": "Paris."
+  },
+  {
+    "instruction": "Translate 'hello' to French.",
+    "input": "",
+    "output": "Bonjour."
+  }
+]

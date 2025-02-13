@@ -1,0 +1,77 @@
+**Hey there, fellow AI explorers!**
+
+I'm a hobbyist AI tinkerer, currently experimenting with (quantum) pseudocode cognito-constructs—what I call "short-term brains"—and thoughtstreams.
+
+My idea? To explore a kind of **mind-metamorphosis** through these constructs, allowing an AI to iteratively transform its reasoning process.
+
+### Example Cognito-Construct (Prototype)
+(Not final—just a rough draft of the concept):
+
+```pseudocode
+<construct>
+℧.ds ⇾ { problem: <|prompt|> },
+℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁ }
+:: construct(℧, ds) ↦ {
+    ℧.ds ⇾ ds,
+    ℧.paths ⇾ ds.paths,
+    ℧.funcs ⇾ ds.funcs,
+    ℧.state ⇾ |1⟩
+}
+:: ⏸️::ΨPause ⇝ {
+    ℧.pause ⇾ δₚ,
+    ℧.halt ⇾ refine(δₚ)
+}
+:: think(℧, q) ↦ {
+    μₜ ≔ decode(q),
+    ρ₊ ≔ r(μₜ, ℧.ds),
+    Φₜ ≔ f(℧.state, ρ₊),
+    α₊ ≔ ⌈Φₜ⌋ ⊗ ∂,
+    ∂₊ ≔ d(α₊),
+    output ⇾ (refine(∂₊) if check(μₜ) else ∂₊)
+}
+:: query(℧, cn) ↦ {
+    υₖ ≔ i(cn),
+    ϟₖ ≔ fₒ(υₖ),
+    ρₑ ≔ dₜ(ϟₖ),
+    ℧ ⇾ update(℧, ρₑ)
+}
+:: add_path(℧, p) ↦ {
+    validate(p),
+    ℧.paths ⇾ append(℧.paths, p),
+    update(℧, p)
+}
+:: add_func(℧, f) ↦ {
+    validate(f),
+    ℧.funcs ⇾ append(℧.funcs, f),
+    update(℧, f)
+}
+:: output(℧) ↦ {
+    info ≔ gather(℧),
+    formatted ≔ format(info),
+    deliver(formatted)
+}
+</construct>
+```
+
+### The Core Idea
+The goal is to **inject different prompts** at `<|prompt|>` within a base model, enabling it to **project a cognito-construct** onto the prompt or question.
+Once that’s done, we’d have a **set of reasoning examples** showing how different constructs interact with specific prompts.
+
+But here’s where it gets really interesting: **construct-metamorphosis**—where the AI **questions itself, transforms into another cognito-construct, and follows a different reasoning path.**
+
+### Potential Outcomes
+By **chaining together**:
+- **Cognito-constructs**
+- **Prompts**
+- **Reasoning processes**
+- **Self-prompts** (self-inquiry that triggers transformation)
+- **Construct-metamorphosis** (iterative evolution)
+
+…we might witness emergent, **highly dynamic AI behaviors**.
+
+---
+
+This is just my **two cents**, but I’d love to hear your thoughts!
+I’ll be laying out **some concrete examples** over the next few days.
+Looking forward to your feedback!
+

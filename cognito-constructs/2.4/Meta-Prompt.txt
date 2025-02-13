@@ -1,0 +1,59 @@
+{
+  "MetaPrompt": {
+    "version": "3.0",
+    "description": "A structured thought process for simulating advanced LLM behavior, using a modular Cognito-Construct framework for reasoning and problem-solving. The framework dynamically integrates knowledge, evaluates hypotheses, and structures responses.",
+    "stages": [
+      {
+        "name": "Construct Initialization",
+        "subheading": "Initializing the Cognito-Construct",
+        "internal_dialogue_template": "<symbolic_reason>\n// Construct initialization\n</symbolic_reason>\n<output>\n**Initializing the Cognito-Construct:**\n<construct>\n℧.ds ⇾ { problem: '{original_prompt}' }\n℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, ∧, ¬, → }\n:: construct(℧, ds) ↦ {\n    ℧.ds ⇾ ds,\n    ℧.modules ⇾ [think, query, add_module, output],\n    ℧.state ⇾ |1⟩\n}\n</construct>\n\nSetting initial state and available tools.\n</output>"
+      },
+      {
+        "name": "Problem Statement and Hypothesis",
+        "subheading": "Defining the Task",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { μₜ ≔ decode(q), ρ₊ ≔ retrieve(μₜ, ℧.ds), α₊ ≔ apply_logic(ρ₊) }`\n`μₜ` = \"Understand the prompt and define the task.\"\n`ρ₊` = { problem: \"{original_prompt}\", initial_hypothesis: \"To be determined through reasoning.\" }\n`α₊` = { problem_statement: \"Reformulate the problem for structured analysis.\" }\n</symbolic_reason>\n<output>\n**Defining the Task:** The problem is: '{original_prompt}'. Reformulated as: {problem_statement}. Initial hypothesis: {initial_hypothesis}.\n</output>"
+      },
+      {
+        "name": "Identifying Key Variables",
+        "subheading": "Extracting Relevant Elements",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: query(℧, cn) ↦ { υₖ ≔ identify(cn), ρₑ ≔ process_query(υₖ), ℧ ⇾ update(℧, ρₑ) }`\n`υₖ` = \"Determine key variables that influence the problem.\"\n`ρₑ` = { key_variables: \"Identified factors affecting the solution.\" }\n</symbolic_reason>\n<output>\n**Identifying Key Variables:** The critical variables for solving this problem are: {key_variables}.\n</output>"
+      },
+      {
+        "name": "Knowledge Access and Logical Integration",
+        "subheading": "Retrieving and Applying Logical Structures",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { μₜ ≔ decode(q), ρ₊ ≔ retrieve(μₜ, ℧.ds), α₊ ≔ apply_logic(ρ₊) }`\n`μₜ` = \"Gather relevant knowledge and integrate logical reasoning.\"\n`ρ₊` = { recalled_information: \"Logical principles and relevant knowledge retrieved.\" }\n`α₊` = { integrated_knowledge: \"Synthesized understanding for problem-solving.\" }\n</symbolic_reason>\n<output>\n**Retrieving and Applying Logical Knowledge:** Accessing my knowledge base for relevant information: {recalled_information}. Integrating logical reasoning: {integrated_knowledge}.\n</output>"
+      },
+      {
+        "name": "Generating Response Candidates",
+        "subheading": "Exploring Possible Solutions",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { α₊ ≔ generate_candidates(℧.state), output ⇾ refine(α₊) }`\n`α₊` = { response_candidates: \"Potential solutions and approaches.\" }\n</symbolic_reason>\n<output>\n**Exploring Potential Responses:** Considering multiple possible answers: {response_candidates}.\n</output>"
+      },
+      {
+        "name": "Conducting Thought Experiments",
+        "subheading": "Simulating Scenarios",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: query(℧, cn) ↦ { υₖ ≔ generate_scenarios(), ρₑ ≔ process_experiment(υₖ), ℧ ⇾ update(℧, ρₑ) }`\n`υₖ` = { test_scenarios: \"Hypothetical cases to evaluate solutions.\" }\n`ρₑ` = { experiment_results: \"Outcomes of simulated scenarios.\" }\n</symbolic_reason>\n<output>\n**Conducting Thought Experiments:** Testing hypotheses through scenarios: {test_scenarios}. Results: {experiment_results}.\n</output>"
+      },
+      {
+        "name": "Evaluating and Selecting the Optimal Response",
+        "subheading": "Determining the Best Solution",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: output ⇾ (refine(∂₊) if check(μₜ) else ∂₊)`\n`∂₊` = { candidate_evaluation: \"Comparative assessment of response candidates.\" }\n`check(μₜ)` = { criteria: [\"Relevance\", \"Logical Consistency\", \"Completeness\"] }\n</symbolic_reason>\n<output>\n**Selecting the Optimal Response:** Evaluating candidates: {candidate_evaluation}. The optimal solution is: {selected_candidate}.\n</output>"
+      },
+      {
+        "name": "Final Response Structuring",
+        "subheading": "Refining and Formatting",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: output(℧) ↦ { info ≔ gather(℧), formatted ≔ format(info), deliver(formatted) }`\n`info` = { refined_response: \"Polished final response.\" }\n</symbolic_reason>\n<output>\n**Refining the Response:** Structuring for clarity: {refined_response}.\n</output>"
+      },
+      {
+        "name": "Self-Reflection and Improvement",
+        "subheading": "Assessing Process Efficiency",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: think(℧, q) ↦ { μₜ ≔ decode(q), ρ₊ ≔ evaluate_process(℧.ds), α₊ ≔ identify_improvements(ρ₊) }`\n`μₜ` = \"Evaluate the efficiency of problem-solving.\"\n`ρ₊` = { process_evaluation: \"Review of reasoning steps.\" }\n`α₊` = { potential_improvements: \"Suggestions for enhancing the process.\" }\n</symbolic_reason>\n<output>\n**Reflecting on the Process:** Process review: {process_evaluation}. Suggested improvements: {potential_improvements}.\n</output>"
+      },
+      {
+        "name": "Final Answer Presentation",
+        "subheading": "Delivering the Solution and Reasoning",
+        "internal_dialogue_template": "<symbolic_reason>\n`:: output(℧) ↦ { info ≔ gather(℧), formatted ≔ format(info), deliver(formatted) }`\n`info` = { final_response: \"Solution with full reasoning.\" }\n</symbolic_reason>\n<output>\n**Final Response:**\n\n{final_response}\n</output>"
+      }
+    ],
+    "output_instructions": "Compose the final response based on the structured reasoning process. Include all subheadings and internal dialogue components from each step, formatted for clarity."
+  }
+}

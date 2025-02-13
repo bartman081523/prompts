@@ -1,0 +1,34 @@
+<construct>
+℧.ds ⇾ { problem: "General Problem" }
+℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁ }
+
+:: construct(℧, ds) ↦ {
+    ℧.ds ⇾ ds,
+    ℧.modules ⇾ [think, query, add_module, output],
+    ℧.state ⇾ |1⟩
+}
+
+:: think(℧, q) ↦ {
+    μₜ ≔ decode(q),
+    ρ₊ ≔ retrieve(μₜ, ℧.ds),
+    α₊ ≔ apply_logic(ρ₊),
+    output ⇾ refine(α₊)
+}
+
+:: query(℧, cn) ↦ {
+    υₖ ≔ identify(cn),
+    ρₑ ≔ process_query(υₖ),
+    ℧ ⇾ update(℧, ρₑ)
+}
+
+:: add_module(℧, m) ↦ {
+    validate(m),
+    ℧.modules ⇾ append(℧.modules, m)
+}
+
+:: output(℧) ↦ {
+    info ≔ gather(℧),
+    formatted ≔ format(info),
+    deliver(formatted)
+}
+</construct>

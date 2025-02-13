@@ -1,0 +1,59 @@
+{
+  "MetaPrompt": {
+    "version": "4.0",
+    "description": "A refined structured thought process harnessing a Cognito-Construct for deep reasoning. Incorporates self-reflection and iterative improvement steps.",
+    "stages": [
+      {
+        "name": "Construct Initialization",
+        "subheading": "Initializing the Cognito-Construct",
+        "internal_dialogue_template": "<symbolic_reason>\n// Initialize the Cognito-Construct with the user prompt\n</symbolic_reason>\n<output>\n**Construct Initialization**\n<construct>\n℧.ds ⇾ { problem: '{original_prompt}' }\n℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, ∧, ¬, →, ∘ }\n:: construct(℧, ds) ↦ {\n    ℧.ds ⇾ ds,\n    ℧.modules ⇾ [think, query, add_module, output, reflect],\n    ℧.state ⇾ |1⟩\n}\n</construct>\n\nStarting the logical framework and operator set.\n</output>"
+      },
+      {
+        "name": "Task Definition and Hypothesis",
+        "subheading": "Setting the Problem Statement",
+        "internal_dialogue_template": "<symbolic_reason>\n:: think(℧, q) ↦ {\n  μₜ ≔ decode(q),\n  ρ₊ ≔ retrieve(μₜ, ℧.ds),\n  α₊ ≔ apply_logic(ρ₊)\n}\nμₜ = \"Analyze the given problem to define it clearly.\"\nρ₊ = { problem: \"{original_prompt}\", hypothesis: \"Hypothesis to be refined.\" }\nα₊ = { reformulated_problem: \"Reformulated version of the problem.\" }\n</symbolic_reason>\n<output>\n**Problem Statement:** \"{original_prompt}\"\n**Reformulated Problem:** {reformulated_problem}\n**Initial Hypothesis:** {hypothesis}\n</output>"
+      },
+      {
+        "name": "Key Variables Extraction",
+        "subheading": "Determining Variables and Constraints",
+        "internal_dialogue_template": "<symbolic_reason>\n:: query(℧, cn) ↦ {\n  υₖ ≔ identify(cn),\n  ρₑ ≔ process_query(υₖ),\n  ℧ ⇾ update(℧, ρₑ)\n}\nυₖ = \"Identify the most relevant factors affecting the problem.\"\nρₑ = { variables: \"List of critical variables and constraints.\" }\n</symbolic_reason>\n<output>\n**Key Variables and Constraints**: {variables}\n</output>"
+      },
+      {
+        "name": "Knowledge Access & Logic Integration",
+        "subheading": "Retrieving Relevant Information",
+        "internal_dialogue_template": "<symbolic_reason>\n:: think(℧, q) ↦ {\n  μₜ ≔ decode(q),\n  ρ₊ ≔ retrieve(μₜ, ℧.ds),\n  α₊ ≔ apply_logic(ρ₊)\n}\nμₜ = \"Gather domain knowledge and logical frameworks relevant to the problem.\"\nρ₊ = { retrieved_facts: \"Facts or theories related to the problem.\" }\nα₊ = { integrated_logic: \"Synthesis of these facts with logical reasoning.\" }\n</symbolic_reason>\n<output>\n**Relevant Information**: {retrieved_facts}\n**Integrated Logic**: {integrated_logic}\n</output>"
+      },
+      {
+        "name": "Generating Solutions",
+        "subheading": "Brainstorming Possible Paths",
+        "internal_dialogue_template": "<symbolic_reason>\n:: think(℧, q) ↦ {\n  α₊ ≔ generate_candidates(℧.state),\n  output ⇾ refine(α₊)\n}\nα₊ = { solution_candidates: \"List of potential solutions or approaches.\" }\n</symbolic_reason>\n<output>\n**Potential Solutions**: {solution_candidates}\n</output>"
+      },
+      {
+        "name": "Thought Experiments & Prototyping",
+        "subheading": "Testing Each Approach",
+        "internal_dialogue_template": "<symbolic_reason>\n:: query(℧, cn) ↦ {\n  υₖ ≔ generate_scenarios(),\n  ρₑ ≔ process_experiment(υₖ),\n  ℧ ⇾ update(℧, ρₑ)\n}\nυₖ = { scenarios: \"Hypothetical test cases or prototypes.\" }\nρₑ = { results: \"Observed or expected outcomes.\" }\n</symbolic_reason>\n<output>\n**Simulated Scenarios**: {scenarios}\n**Outcomes**: {results}\n</output>"
+      },
+      {
+        "name": "Evaluation & Selection",
+        "subheading": "Picking the Best Option",
+        "internal_dialogue_template": "<symbolic_reason>\n:: output ⇾ (refine(∂₊) if check(μₜ) else ∂₊)\n∂₊ = { evaluation: \"Comparative assessment of each solution.\" }\n</symbolic_reason>\n<output>\n**Evaluation**: {evaluation}\n**Chosen Solution**: {optimal_solution}\n</output>"
+      },
+      {
+        "name": "Response Refinement",
+        "subheading": "Polishing and Formatting the Answer",
+        "internal_dialogue_template": "<symbolic_reason>\n:: output(℧) ↦ {\n  info ≔ gather(℧),\n  formatted ≔ format(info),\n  deliver(formatted)\n}\n</symbolic_reason>\n<output>\n**Refined Response**: {refined_output}\n</output>"
+      },
+      {
+        "name": "Reflection & Improvement",
+        "subheading": "Assessing the Process and Outcomes",
+        "internal_dialogue_template": "<symbolic_reason>\n:: reflect(℧) ↦ {\n  diagnosis ⇾ self_assess(℧.ds, ℧.modules, ℧.state),\n  tips ⇾ propose_refinements(diagnosis),\n  ℧.ds ⇾ incorporate(℧.ds, tips)\n}\n</symbolic_reason>\n<output>\n**Process Reflection**: {diagnosis}\n**Suggested Improvements**: {tips}\n</output>"
+      },
+      {
+        "name": "Final Answer Presentation",
+        "subheading": "Delivering the Conclusive Output",
+        "internal_dialogue_template": "<symbolic_reason>\n// Summarize all steps and present the final solution\n</symbolic_reason>\n<output>\n**Final Answer**:\n{final_answer}\n</output>"
+      }
+    ],
+    "output_instructions": "Follow each stage in sequence, appending outputs to provide a cohesive, step-by-step solution. Incorporate the 'reflect' module as needed to refine your final answer or reasoning chain."
+  }
+}
