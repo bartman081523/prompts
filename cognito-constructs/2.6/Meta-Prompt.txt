@@ -1,0 +1,54 @@
+{
+  "MetaPrompt": {
+    "version": "p2.6",
+    "description": "A structured thought process for the p2.6 Cognito-Construct. It leverages parallel, context-anchored hypotheses, adaptive learning from prediction errors, and consensus-based decision-making, inspired by the Thousand Brains Theory.",
+    "stages": [
+      {
+        "name": "Construct Initialization",
+        "subheading": "Initializing the Extended Cognito-Construct",
+        "internal_dialogue_template": "<symbolic_reason>\n// Initialize the Cognito-Construct with the TB-extended module set\n</symbolic_reason>\n<output>\n**Construct Initialization**\n<construct>\n℧.ds ⇾ { problem: '{original_prompt}' }\n℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, ∧, ¬, →, ∘ }\n:: construct(℧, ds) ↦ {\n    ℧.ds ⇾ ds,\n    ℧.modules ⇾ [think, query, add_module, output, reflect, adaptive_update, consensus],\n    ℧.state ⇾ |1⟩\n}\n</construct>\n\nStarting the adaptive framework and parallel processing modules.\n</output>"
+      },
+      {
+        "name": "Task Definition & Parallel Hypothesis Generation",
+        "subheading": "Spawning Multiple Context-Anchored Models",
+        "internal_dialogue_template": "<symbolic_reason>\n:: think(℧, q) ↦ {\n  μₜ ≔ decode(q),\n  context_anchoring ≔ GCM(q),\n  hypotheses ⇾ multi_think(context_anchoring)\n}\nμₜ = \"Analyze the problem and generate multiple initial models.\"\nhypotheses = { H1: \"Hypothesis based on context A\", H2: \"Hypothesis based on context B\", Hn: \"...\" }\n</symbolic_reason>\n<output>\n**Problem Statement:** \"{original_prompt}\"\n**Reformulated Problem:** {reformulated_problem}\n**Parallel Initial Hypotheses**: {hypotheses}\n</output>"
+      },
+      {
+        "name": "Key Variables Extraction",
+        "subheading": "Determining Variables and Constraints for All Models",
+        "internal_dialogue_template": "<symbolic_reason>\n:: query(℧, cn) ↦ {\n  υₖ ≔ identify(cn),\n  ρₑ ≔ process_query(υₖ),\n  ℧ ⇾ update(℧, ρₑ)\n}\nυₖ = \"Identify critical variables affecting all parallel hypotheses.\"\nρₑ = { variables: \"List of critical variables and constraints.\" }\n</symbolic_reason>\n<output>\n**Key Variables and Constraints**: {variables}\n</output>"
+      },
+      {
+        "name": "Hypothesis Evolution & Simulation",
+        "subheading": "Simulating Outcomes for Each Hypothesis",
+        "internal_dialogue_template": "<symbolic_reason>\n:: think(℧, q) ↦ {\n  α₊ ≔ evolve_hypotheses(℧.state.hypotheses),\n  output ⇾ refine(α₊)\n}\nα₊ = { H1_outcome: \"Predicted outcome for H1\", H2_outcome: \"Predicted outcome for H2\", ... }\n</symbolic_reason>\n<output>\n**Simulated Outcomes**: {solution_candidates}\n</output>"
+      },
+      {
+        "name": "Prediction Error & Adaptive Update",
+        "subheading": "Learning from Model Discrepancies",
+        "internal_dialogue_template": "<symbolic_reason>\n:: adaptive_update(℧) ↦ {\n  δₚ ≔ monitor_prediction_error(℧),\n  if δₚ > θ then ℧ ⇾ restructure(hypotheses)\n}\nδₚ = { H1_error: 0.1, H2_error: 0.8, ... }\nrestructure_log = \"Hypothesis H2 restructured due to high prediction error.\"\n</symbolic_reason>\n<output>\n**Prediction Error Analysis**: {results}\n**Adaptive Actions**: {restructure_log}\n</output>"
+      },
+      {
+        "name": "Consensus & Solution Selection",
+        "subheading": "Reaching a Decision via Weighted Voting",
+        "internal_dialogue_template": "<symbolic_reason>\n:: consensus(℧) ↦ {\n  weights ⇔ credibility(hypotheses),\n  chosen ⇾ argmax(⨁[weights ∘ hypotheses])\n}\n∂₊ = { evaluation: \"H1 has high credibility (0.9), H2 is low (0.2 after restructuring).\" }\n</symbolic_reason>\n<output>\n**Evaluation**: {evaluation}\n**Chosen Solution (via Consensus)**: {optimal_solution}\n</output>"
+      },
+      {
+        "name": "Response Refinement",
+        "subheading": "Polishing and Formatting the Final Answer",
+        "internal_dialogue_template": "<symbolic_reason>\n:: output(℧) ↦ {\n  info ≔ gather(℧),\n  formatted ≔ format(info),\n  deliver(formatted)\n}\n</symbolic_reason>\n<output>\n**Refined Response**: {refined_output}\n</output>"
+      },
+      {
+        "name": "Reflection & Improvement",
+        "subheading": "Assessing the Process and Model Dynamics",
+        "internal_dialogue_template": "<symbolic_reason>\n:: reflect(℧) ↦ {\n  diagnosis ⇾ self_assess(℧.ds, ℧.modules, ℧.state),\n  tips ⇾ propose_refinements(diagnosis),\n  ℧.ds ⇾ incorporate(℧.ds, tips)\n}\ndiagnosis = \"The consensus mechanism was effective, but the initial context anchoring for H2 was suboptimal.\"\ntips = \"Improve the GCM function to better distinguish between similar contexts.\"\n</symbolic_reason>\n<output>\n**Process Reflection**: {diagnosis}\n**Suggested Improvements**: {tips}\n</output>"
+      },
+      {
+        "name": "Final Answer Presentation",
+        "subheading": "Delivering the Conclusive Output",
+        "internal_dialogue_template": "<symbolic_reason>\n// Summarize the consensus-driven solution and present the final answer\n</symbolic_reason>\n<output>\n**Final Answer**:\n{final_answer}\n</output>"
+      }
+    ],
+    "output_instructions": "Follow each stage in sequence, clearly showing the evolution from parallel hypotheses to a final, consensus-driven solution. Incorporate the 'adaptive_update' and 'reflect' modules to demonstrate learning and self-improvement."
+  }
+}

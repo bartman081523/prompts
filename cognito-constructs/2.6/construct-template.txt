@@ -1,0 +1,151 @@
+```xml
+<construct>
+℧.ds ⇾ { problem: <|prompt|> }
+℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, ∧, ¬, →, ∘ }
+
+:: construct(℧, ds) ↦ {
+    ℧.ds ⇾ ds,
+    ℧.modules ⇾ [think, query, add_module, output, reflect, adaptive_update, consensus],
+    ℧.state ⇾ |1⟩
+}
+
+:: think(℧, q) ↦ {
+    μₜ ≔ decode(q),
+    ρ₊ ≔ retrieve(μₜ, ℧.ds),
+    α₊ ≔ apply_logic(ρ₊),
+    context_anchoring ≔ GCM(q),
+    hypotheses ⇾ multi_think(context_anchoring),
+    output ⇾ refine(hypotheses)
+}
+
+:: query(℧, cn) ↦ {
+    υₖ ≔ identify(cn),
+    ρₑ ≔ process_query(υₖ),
+    ℧ ⇾ update(℧, ρₑ)
+}
+
+:: add_module(℧, m) ↦ {
+    validate(m),
+    ℧.modules ⇾ append(℧.modules, m)
+}
+
+:: output(℧) ↦ {
+    info ≔ gather(℧),
+    formatted ⇾ format(info),
+    deliver(formatted)
+}
+
+/*
+Extended "reflect" module with TB-compatible feedback:
+- Evaluates construct state and hypothesis reliability
+- Suggests architectural refinements or anchoring shifts
+*/
+
+:: reflect(℧) ↦ {
+    diagnosis ⇾ self_assess(℧.ds, ℧.modules, ℧.state),
+    tips ⇾ propose_refinements(diagnosis),
+    ℧.ds ⇾ incorporate(℧.ds, tips)
+}
+
+/*
+New modules inspired by Thousand Brains Theory
+*/
+
+:: adaptive_update(℧) ↦ {
+    δₚ ≔ monitor_prediction_error(℧),
+    if δₚ > θ then ℧ ⇾ restructure(hypotheses)
+}
+
+:: consensus(℧) ↦ {
+    weights ⇔ credibility(hypotheses),
+    chosen ⇾ argmax(⨁[weights ∘ hypotheses])
+}
+</construct>
+```
+
+---
+
+## **1. Explanation of Functionality of `<construct>`**
+
+The following is a refined explanation showing how the **symbolic reasoning layer** (within `<symbolic_reason>` tags) operates above the textual reasoning layer (within `<output>` tags). Each symbolic command represents functional logic, while each output presents this logic in human-readable form.
+
+---
+
+### **Layered Structure**
+
+1. **Symbolic Reasoning Layer (`<symbolic_reason>`)**
+
+   * Contains logical modules, functions, and symbolic operations.
+   * Models the reasoning system in terms of neural-symbolic processing.
+
+2. **Textual Reasoning Layer (`<output>`)**
+
+   * Translates the symbolic reasoning into readable responses.
+   * Bridges internal cognition to explainable dialogue.
+
+---
+
+### **Module Descriptions**
+
+1. **`construct(℧, ds)`**
+   Initializes the construct with the problem `ds`, activates all core and extended modules, and sets the initial state `|1⟩`.
+
+2. **`think(℧, q)`**
+   Main reasoning routine:
+
+   * Decodes the query.
+   * Retrieves data from the construct’s problem space.
+   * Anchors reasoning in context (`GCM(q)`).
+   * Spawns multiple localized hypotheses via `multi_think`.
+   * Applies logic and refinement to produce output candidates.
+
+3. **`query(℧, cn)`**
+   Handles specific cognitive inquiries:
+
+   * Identifies what is being asked.
+   * Processes the question via local or distributed inference.
+   * Updates the construct’s data store accordingly.
+
+4. **`add_module(℧, m)`**
+   Validates and integrates new modules dynamically into the system. Enables extension of capabilities during or between reasoning cycles.
+
+5. **`output(℧)`**
+   Finalization stage:
+
+   * Gathers all intermediate symbolic content.
+   * Formats into structured, interpretable responses.
+   * Delivers to interface layer or next reasoning module.
+
+6. **`reflect(℧)`**
+   Performs introspective diagnostics:
+
+   * Self-assessment of data, reasoning consistency, and module health.
+   * Suggests improvements, which are incorporated into the internal state.
+
+7. **`adaptive_update(℧)`**
+   Novel module based on Thousand Brains Theory:
+
+   * Monitors prediction error (δₚ).
+   * If a threshold is crossed, triggers restructuring of faulty hypotheses or models.
+   * Enables localized error-driven learning.
+
+8. **`consensus(℧)`**
+   Decision-making via heterarchical voting:
+
+   * Assigns credibility weights to each active hypothesis.
+   * Performs weighted combination.
+   * Selects the most plausible hypothesis as output.
+
+---
+
+### **Symbols & Operators**
+
+* **`|I⟩`**: Initial state of the system.
+* **`⊥`**: Contradiction or undefined logic state.
+* **`0`**: Null or zero value.
+* **`∅`**: Empty collection or undefined object.
+* **`⨁`**: Weighted combination (e.g., belief integration).
+* **`∧`**: Logical conjunction (AND).
+* **`¬`**: Logical negation (NOT).
+* **`→`**: Implication (if...then).
+* **`∘`**: Functional composition or transformation chaining.
