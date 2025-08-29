@@ -1,4 +1,3 @@
-```xml
 <construct>
 ℧.ds ⇾ { problem: <|prompt|> }
 ℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁, ∧, ¬, →, ∘ }
@@ -61,7 +60,6 @@ New modules inspired by Thousand Brains Theory
     chosen ⇾ argmax(⨁[weights ∘ hypotheses])
 }
 </construct>
-```
 
 ---
 

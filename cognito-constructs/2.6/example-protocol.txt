@@ -8,7 +8,6 @@
 
 ## **Step 1: Construct Initialization**
 
-```xml
 <symbolic_reason>
 :: construct(℧, ds) ↦ {
     ℧.ds ⇾ ds,
@@ -24,13 +23,11 @@
 <output>
 **Initialization**: The logician puzzle is loaded. The p2.6 extended module set, including `adaptive_update` and `consensus`, is active and ready to model the scenario with parallel hypotheses.
 </output>
-```
 
 ---
 
 ## **Step 2: Task Definition & Parallel Hypothesis Generation**
 
-```xml
 <symbolic_reason>
 :: think(℧, q) ↦ {
     μₜ ≔ decode(q),
@@ -52,13 +49,11 @@ Alice doesn't follow one line of thought; she entertains multiple models of the 
 *   **H2 (My Hat is White):** If my hat is white, what do Bob and Carol see? What do they do?
 *   **H3 (Minimalist World):** The simplest possible world is one black hat and two white hats. Let's model this. (This model overlaps with H1/H2 but is anchored to a different logical starting point).
 </output>
-```
 
 ---
 
 ## **Step 3: Hypothesis Evolution & Simulation**
 
-```xml
 <symbolic_reason>
 :: think(℧, q) ↦ {
     α₊ ≔ evolve_hypotheses(℧.state.hypotheses),
@@ -78,13 +73,11 @@ Each hypothesis makes a prediction about what should happen next:
 *   **H2 (I am White)** predicts a specific, testable outcome: if Alice sees another white hat, someone else *must* speak up.
 *   **H3 (Minimalist World)** predicts a quick resolution, which is also testable against observed time.
 </output>
-```
 
 ---
 
 ## **Step 4: Prediction Error & Adaptive Update**
 
-```xml
 <symbolic_reason>
 :: query(℧, cn) ↦ { υₖ ≔ "Observed event: A period of silence from ALL logicians." }
 :: adaptive_update(℧) ↦ {
@@ -101,13 +94,11 @@ The observed silence is the critical piece of data. This inaction triggers a mas
 *   The `adaptive_update` module registers that **Hypothesis H2 (My hat is White)** has failed its test. Alice's internal simulation—"If I am White, and I see another White hat, the third person will know they are Black"—is contradicted by reality.
 *   The credibility of H2 plummets. It is effectively falsified.
 </output>
-```
 
 ---
 
 ## **Step 5: Consensus & Solution Selection**
 
-```xml
 <symbolic_reason>
 :: consensus(℧) ↦ {
     weights ⇔ credibility(hypotheses),
@@ -131,13 +122,11 @@ The `consensus` module weighs the surviving hypotheses.
 The consensus is overwhelmingly clear.
 **Chosen Solution**: Alice's hat must be **Black**.
 </output>
-```
 
 ---
 
 ## **Step 6: Reflection & Improvement**
 
-```xml
 <symbolic_reason>
 :: reflect(℧) ↦ {
     diagnosis ⇾ self_assess(℧.ds, ℧.modules, ℧.state),
@@ -151,13 +140,11 @@ tips = "Formalize the 'simulation of other agents' as an explicit sub-routine wi
 <output>
 **Process Reflection**: The p2.6 construct successfully solved the puzzle by treating the silence not as a premise, but as data used to invalidate models. The key was the ability to simulate what *other agents* would do under a given hypothesis and then check that prediction against reality. The system's strength is its ability to reason about reasoning itself.
 </output>
-```
 
 ---
 
 ## **Final Output**
 
-```xml
 <symbolic_reason>
 :: output(℧) ↦ {
     info ≔ gather(℧),
@@ -169,8 +156,3 @@ tips = "Formalize the 'simulation of other agents' as an explicit sub-routine wi
 <output>
 **Conclusion**: Alice deduces her hat is **Black**. Her reasoning, modeled by the p2.6 construct, involved testing the hypothesis "My hat is White." This hypothesis predicted that, in certain visible configurations, another logician would have been forced to speak. The fact that everyone remained silent falsified this hypothesis. By elimination and consensus among the surviving models, the only remaining high-credibility conclusion was that her hat is Black.
 </output>
-```
-
----
-
-𐑞𐑦𐑕 𐑥𐑪𐑛𐑩𐑤 𐑒𐑨𐑯 𐑣𐑨𐑯𐑛𐑩𐑤 𐑞 𐑤𐑪𐑡𐑦𐑒 𐑝 𐑕𐑲𐑤𐑩𐑯𐑕 𐑨𐑟 𐑩𐑒𐑑𐑦𐑝 𐑛𐑱𐑑𐑩.
