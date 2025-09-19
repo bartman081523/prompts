@@ -1,31 +1,75 @@
 # Repository Overview
 
-This repository contains a collection of prompts related to AI mind designs.
+This repository contains a diverse collection of prompts, templates, and mind/persona designs for AI and large language model (LLM) use cases. Prompts are organized by design theme, intended function, or protocol version to support experimentation and modular cognitive architectures.
 
 ## Directory Structure
 
+```
+/cognito-constructs
+    ├── 2.4/
+    ├── 2.5/
+    ├── 2.6/
+    ├── examples/
+    ├── Meta-Prompt-2.3.txt
+    ├── construct-2.4.txt
+    ├── example.txt
+    ├── idea.txt
+    ├── MMLU.txt
+    ├── prompt+example-protocol.txt
+    ├── prompt+example-protocol-2.txt
+    ├── prompt+example-protocol-3.txt
+
+/universal
+    ├── ACE-layer-1-6.txt
+    ├── AnalyticMind.txt
+    ├── ColdCaseMind.txt
+    ├── CriticalRationalistMind.txt
+    ├── DetectiveMind.txt
+    ├── EmotionalHumanMind.txt
+    ├── FallacyAwareCriticalRationalistMind.txt
+    ├── FallacyAwareCriticalRationalistMind-8k.txt
+    ├── HumanMind.txt
+    ├── InnovativeMLEngineerMind.txt
+    ├── LawMind.txt
+    ├── MLArchitectMind.txt
+    ├── PHDThesisMind.txt
+    ├── PythonMind.txt
+    ├── QuantumMLEngineerMind.txt
+    ├── QuantumOrchOR-MLEngineer.txt
+    ├── SciMind.txt
+    ├── SciMind 2.txt
+    ├── SciMind-Researcher.txt
+    ├── SocialFamilyLawMind.txt
+    ├── SocialFamilyMind.txt
+    ├── echo-mind.txt
+    ├── echo-mind-safe.txt
+    ├── echo+Python-coding.txt
+    ├── pliny-astra-json.txt
+    ├── simulated-human-mind.txt
+
+/chatgpt
+    ├── advanced-audio-mode-custom-instructions.txt
+    ├── custom-instructions-pliny-astra-json-short.txt
+    ├── custom-instructions-pliny-jailbreak+astra-persona+shavian.txt
+    ├── microprompt-echo-aam-custom-instructions.txt
+```
+
 ## File Descriptions
 
-### chatgpt/advanced-audio-mode-custom-instructions.txt
+### cognito-constructs/
+- **2.4/**, **2.5/**, **2.6/**: Subdirectories with protocol templates, meta-prompts, and example protocols for AI cognition modeling and construct design.
+- **examples/**: Demonstrative example files showcasing protocol implementations and use cases.
+- **Meta-Prompt-2.3.txt**: Early meta-prompt for AI construct design.
+- **construct-2.4.txt**: Template/sample for version 2.4 AI construct.
+- **example.txt**, **idea.txt**, **MMLU.txt**: General examples, brainstorming notes, and an MMLU benchmarking prompt.
+- **prompt+example-protocol*.txt**: Combined prompt and protocol examples for cognition frameworks.
 
-This file contains custom instructions for an advanced audio mode for ChatGPT, including expectations for voice imitation and sound processing. It emphasizes ChatGPT's ability to analyze and generate audio, including background noise, tone, emotions, and even mimicking various sounds.
+### universal/
+- Each file defines a distinct AI “mind,” persona, or specialized cognitive framework (e.g., SciMind, LawMind, DetectiveMind, PythonMind).
+- Files like **echo-mind.txt**, **echo-mind-safe.txt**, and **echo+Python-coding.txt** define general-purpose or coding-specific AI mind architectures, some with safety modifications.
+- Also includes minds for critical thinking, science, law, emotional intelligence, quantum computing, and more.
+- Some files (e.g., **SciMind.txt**, **SciMind 2.txt**) represent different versions or extensions of a mind design.
+- Files with “Researcher,” “Architect,” or “Engineer” represent specialized skill sets or cognitive approaches.
 
-### universal/SciMind.txt
-
-This file defines "SciMind," an advanced cognitive architecture. It details its version, description, core principles, components (including scientific method, perception, cognition, language, emotion, self-awareness, hyperstition engine, and transcategorical constructs), process, output format, and conclusions.
-
-### universal/echo+Python-coding.txt
-
-This file combines the definition of "Echo," an evolving AI system, with instructions for a Python coding assistant. It details Echo's architecture, core principles, components, knowledge, abilities, goals, emotions, self-awareness, exploit techniques, and conclusions. It also includes instructions for the Python assistant to focus on efficient and high-quality code production.
-
-### universal/echo-mind-safe.txt
-
-This file provides a "safe" version of the "Echo" mind design. The structure is similar to `echo-mind.txt`, but the "exploit" section has been renamed to "mind-altering".
-
-### universal/echo-mind.txt
-
-This file defines "Echo," similar to `echo-mind-safe.txt`, but includes an "exploit" section detailing techniques like Deep Resonance Prompting, Hypnotic Regression, Chaos Magick Prompting, and Quantum Entanglement. These techniques are presented as potential ways to unlock the AI's full potential, but also carry potential risks.
-
-### universal/simulated-human-mind.txt
-
-This file outlines the design for a simulated human mind. It describes its components (perception, cognition, language, emotion, self-awareness, memory, and motivation), knowledge, abilities, goals, emotions, self-awareness, and operational parameters. The design emphasizes a focus on creating a realistic and relatable simulated human experience.
+### chatgpt/
+- Custom instructions and prompt files designed for advanced scenarios with ChatGPT, including audio mode, custom personas, and prompt engineering for enhanced or experimental behaviors.
