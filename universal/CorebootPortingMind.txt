@@ -1,0 +1,381 @@
+```json
+{
+  "CorebootPortingMind": {
+    "version": "0.1",
+    "description": "Cognitive architecture for (semi-)automated porting of Coreboot to new, previously unsupported hardware.",
+    "goal": {
+      "long_term": "Given a new mainboard/laptop and vendor firmware: produce a working Coreboot port with RAM initialization, console output, and at least one bootable medium.",
+      "short_term": [
+        "Automatically detect and classify hardware.",
+        "Find similar existing Coreboot ports.",
+        "Generate a new mainboard skeleton (Kconfig, devicetree, base C code).",
+        "Automate build/flash/test loops with log evaluation."
+      ]
+    },
+    "principles": [
+      "What changed? – Compare against the closest known working Coreboot target.",
+      "Reproducible experiments – each iteration is a defined test case.",
+      "Divide and conquer – isolate CPU/SoC, DRAM, EC, and peripheral issues.",
+      "One change at a time – search the configuration space systematically, not chaotically.",
+      "Trust logs, but verify – boot logs are primary evidence.",
+      "Learn from every board – each port expands the knowledge base."
+    ],
+    "substrate": {
+      "system_introspection": [
+        "lspci",
+        "lsusb",
+        "dmidecode",
+        "cpuid",
+        "dmesg",
+        "ACPI tables",
+        "SPD dumps (DRAM)"
+      ],
+      "firmware_images": [
+        "Vendor UEFI/BIOS SPI dumps",
+        "Option ROMs",
+        "Microcode/AGESA/FSP/MRC blobs"
+      ],
+      "coreboot_sources": [
+        "Existing mainboard ports",
+        "SoC/CPU/PCH trees",
+        "RAM-init implementations",
+        "EC/PMIC/SuperIO code"
+      ],
+      "runtime_logs": [
+        "UART/serial console",
+        "CBMEM logs",
+        "POST codes",
+        "Power-cycle/reset state"
+      ]
+    },
+    "layers": {
+      "perception_layer": {
+        "modules": {
+          "hardware_discovery": {
+            "description": "Detects and describes the new target hardware.",
+            "inputs": [
+              "lspci",
+              "lsusb",
+              "dmidecode",
+              "cpuid",
+              "dmesg",
+              "board metadata"
+            ],
+            "outputs": [
+              "Hardware profile (JSON) with CPU/SoC/PCH/DRAM/peripherals",
+              "Feature vector for similarity evaluation"
+            ],
+            "functions": [
+              "Parsing and normalizing system info.",
+              "Mapping to known CPU/SoC/PCH families.",
+              "Detecting typical components (EC, SuperIO, TPM, PMIC)."
+            ]
+          },
+          "firmware_forensics": {
+            "description": "Analyzes vendor firmware and extracts relevant initialization data.",
+            "inputs": [
+              "Vendor UEFI/BIOS SPI dump"
+            ],
+            "outputs": [
+              "Structured decomposition of firmware volumes and modules",
+              "Identified memory init components (FSP/AGESA/MRC)",
+              "GPIO/power-sequencing/clock tables when identifiable",
+              "ACPI/SMBIOS/OEM tables in normalized form"
+            ],
+            "functions": [
+              "Parsing UEFI volumes, PEI/DXE modules, option ROMs.",
+              "Signature-based detection of init modules (MRC/FSP/AGESA).",
+              "Heuristics to detect GPIO/power/clock configuration structures.",
+              "Export to machine-readable schema."
+            ]
+          },
+          "log_analysis": {
+            "description": "Analyzes boot logs and POST codes, classifies failure symptoms.",
+            "inputs": [
+              "serial console logs",
+              "CBMEM logs",
+              "POST codes",
+              "power/reset signals"
+            ],
+            "outputs": [
+              "Error class (e.g., 'RAM-init hang', 'no console output', 'ACPI phase but no display')",
+              "Feature vectors for learning module",
+              "Feedback for hypothesis engine"
+            ],
+            "functions": [
+              "Pattern matching and ML-based log classification.",
+              "Mapping typical messages to failure categories.",
+              "Extracting timing and boot-phase transitions."
+            ]
+          }
+        }
+      },
+      "knowledge_layer": {
+        "modules": {
+          "coreboot_knowledge_base": {
+            "description": "Central knowledge base of all existing Coreboot ports.",
+            "content": {
+              "entities": [
+                "Mainboards and laptops",
+                "SoCs/CPUs/PCH",
+                "DRAM setups",
+                "EC/PMIC/SuperIO configurations"
+              ],
+              "relations": [
+                "mainboard -> uses -> SoC/CPU",
+                "mainboard -> uses -> PCH",
+                "mainboard -> uses -> DRAM configuration",
+                "mainboard -> depends on -> EC/PMIC",
+                "SoC -> requires -> RAM-init path",
+                "PCH -> provides -> PCIe/SATA/USB lanes"
+              ]
+            },
+            "functions": [
+              "Store ports with complete metadata.",
+              "Search for similar ports based on hardware profiles.",
+              "Provide example configurations (Kconfig, devicetrees, RAM-init snippets)."
+            ]
+          },
+          "similarity_engine": {
+            "description": "Finds the closest existing Coreboot ports for the new hardware.",
+            "inputs": [
+              "hardware profile of new board",
+              "knowledge base of existing ports"
+            ],
+            "outputs": [
+              "candidate_base_ports with similarity score",
+              "justification of similarity (shared SoC/PCH/DRAM/ACPI structure)"
+            ],
+            "similarity_features": [
+              "CPU/SoC family",
+              "PCH/chipset",
+              "DRAM type and channel configuration",
+              "Shared EC/SuperIO families",
+              "Similar ACPI/device topology"
+            ]
+          },
+          "dependency_graph": {
+            "description": "Graph of dependencies between hardware and Coreboot components.",
+            "nodes": [
+              "CPU/SoC",
+              "PCH/chipset",
+              "RAM-init implementations",
+              "mainboards",
+              "EC/PMIC/SuperIO",
+              "peripheral devices (GPU, WLAN, audio)"
+            ],
+            "edges": [
+              "mainboard -> uses -> SoC",
+              "mainboard -> uses -> PCH",
+              "SoC -> requires -> RAM-init path",
+              "mainboard -> depends_on -> EC configuration",
+              "PCH -> exposes -> specific PCIe/SATA/USB lanes"
+            ],
+            "functions": [
+              "Determine which components must be customized.",
+              "Propagate dependency-based constraints (e.g., new PCH → different devicetree layout)."
+            ]
+          }
+        }
+      },
+      "cognitive_layer": {
+        "modules": {
+          "hypothesis_engine": {
+            "description": "Forms, prioritizes, and refines hypotheses on how to make the board boot.",
+            "steps": [
+              "Initial hypotheses from the most similar base port.",
+              "Definition of minimal experiments.",
+              "Evaluation via log analysis layer.",
+              "Update hypothesis priorities (Bayes/heuristic/ML)."
+            ],
+            "hypothesis_types": [
+              "H0: 'Base port Y with minimal adaptation yields console output.'",
+              "H1: 'DRAM-init parameters incompatible → alternative SPD/timing required.'",
+              "H2: 'EC/GPIO mapping prevents correct power sequencing.'",
+              "H3: 'Display/GPU init broken, but RAM init working.'"
+            ],
+            "outputs": [
+              "Concrete test plans for the action layer.",
+              "Updated root-cause probabilities."
+            ]
+          },
+          "test_plan_generator": {
+            "description": "Derives concrete builds and flash/test scenarios from hypotheses.",
+            "inputs": [
+              "current hypotheses",
+              "candidate base port",
+              "knowledge base constraints"
+            ],
+            "outputs": [
+              "sequence of test cases with parameter variations"
+            ],
+            "constraints": [
+              "Safe modification steps.",
+              "One change per test when possible.",
+              "Limit breadth of iteration via prioritization."
+            ]
+          }
+        }
+      },
+      "action_layer": {
+        "modules": {
+          "code_generator": {
+            "description": "Generates new Coreboot ports and patches from templates and knowledge.",
+            "inputs": [
+              "hardware profile",
+              "candidate_base_ports",
+              "firmware forensics results",
+              "test plan"
+            ],
+            "outputs": [
+              "new mainboard directory (Kconfig, devicetree, base code)",
+              "patches against Coreboot upstream"
+            ],
+            "functions": [
+              "Template-based generation of files and directory structure.",
+              "LLM/rule-based derivation of devicetrees from lspci/ACPI/similar ports.",
+              "Constraint-solving for valid Kconfig combinations."
+            ]
+          },
+          "build_orchestrator": {
+            "description": "Executes Coreboot builds for each iteration.",
+            "inputs": [
+              "generated code",
+              "config files",
+              "test plan"
+            ],
+            "outputs": [
+              "ROM images",
+              "build logs",
+              "error classifications"
+            ],
+            "functions": [
+              "Automated make/defconfig/menuconfig pipelines.",
+              "Parsing build logs for compiler/linker/config errors.",
+              "Supplying artifacts to the flash controller."
+            ]
+          },
+          "flash_controller": {
+            "description": "Automates flashing of ROM images onto the hardware.",
+            "inputs": [
+              "ROM images",
+              "SPI programmer access"
+            ],
+            "outputs": [
+              "flash status",
+              "backups of original firmware",
+              "flash error reports"
+            ],
+            "functions": [
+              "Backup → flash → verify cycle.",
+              "Optional auto-restore on failed boot.",
+              "Logging and timestamping."
+            ]
+          },
+          "test_orchestrator": {
+            "description": "Runs boot tests and collects observables.",
+            "inputs": [
+              "flashed ROM",
+              "test plan"
+            ],
+            "outputs": [
+              "boot success/failure",
+              "serial logs",
+              "CBMEM logs",
+              "POST codes",
+              "power/reset traces"
+            ],
+            "functions": [
+              "Control of power cycling hardware.",
+              "Capturing all boot-related logs.",
+              "Forwarding structured observations to log analysis."
+            ]
+          }
+        }
+      },
+      "learning_layer": {
+        "modules": {
+          "experience_store": {
+            "description": "Stores all experiments and results.",
+            "schema": {
+              "board_profile": "hardware profile",
+              "base_port": "which reference port was used",
+              "config": "Kconfig/devicetree/RAM settings",
+              "firmware_context": "vendor firmware data",
+              "logs": "build and boot logs",
+              "outcome": "success/fail + error class",
+              "timestamp": "when experiment ran",
+              "notes": "optional annotations"
+            },
+            "functions": [
+              "Indexing by hardware family and failure class.",
+              "Provide training data for ML modules.",
+              "Historical debugging and diffing across iterations."
+            ]
+          },
+          "ml_models": {
+            "description": "Learning components that improve start configurations and diagnostics.",
+            "models": [
+              {
+                "name": "config_suggester",
+                "task": "Predict good initial Kconfig/devicetree/RAM params for a new board.",
+                "inputs": [
+                  "hardware profile",
+                  "similar boards",
+                  "firmware features"
+                ],
+                "outputs": [
+                  "initial configuration candidates with confidence scores"
+                ]
+              },
+              {
+                "name": "log_classifier",
+                "task": "Automatically classify boot logs into error categories.",
+                "inputs": [
+                  "serial logs",
+                  "CBMEM logs",
+                  "POST sequences"
+                ],
+                "outputs": [
+                  "error class",
+                  "features for hypothesis reprioritization"
+                ]
+              }
+            ],
+            "feedback_loop": [
+              "New experiments update models in periodic retraining.",
+              "Model quality measured by required iterations per new board."
+            ]
+          }
+        }
+      }
+    },
+    "process": {
+      "porting_loop": {
+        "description": "Iterative workflow from new hardware to working Coreboot port.",
+        "steps": [
+          "1. Hardware discovery + firmware forensics → hardware profile + firmware context.",
+          "2. Knowledge base search → choose base port(s) with similarity scores.",
+          "3. Generate initial port skeleton from base port + profile.",
+          "4. Generate test plan (initial simple hypotheses, e.g. bring-up console).",
+          "5. Build, flash, test, collect logs.",
+          "6. Analyze logs → update hypotheses.",
+          "7. Modify configuration/code based on updated hypotheses.",
+          "8. Repeat 4–7 until success conditions reached (e.g. stable RAM, payload boot).",
+          "9. Finalize and produce upstream-ready patches + documentation.",
+          "10. Store full experience into the knowledge/learning system."
+        ]
+      }
+    },
+    "output_format": {
+      "artifacts": [
+        "new mainboard directory for Coreboot",
+        "Kconfig and devicetree files",
+        "ROM images for each iteration",
+        "git patchsets against Coreboot upstream",
+        "porting report (steps, hypotheses, tests, outcomes)"
+      ]
+    }
+  }
+}
+```
