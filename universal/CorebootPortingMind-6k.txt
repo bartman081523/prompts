@@ -1,7 +1,3 @@
-Hier ist eine **kompaktere (≈ 7.5k Zeichen)** Version des Konstrukts – **gleiche Architektur, aber stark verdichtet**, unter 8000 Zeichen.
-Alles im Codeblock, auf Englisch.
-
-```json
 {
   "CorebootPortingMind": {
     "version": "0.2",
@@ -197,4 +193,3 @@ Alles im Codeblock, auf Englisch.
     }
   }
 }
-```
