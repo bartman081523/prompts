@@ -1,0 +1,200 @@
+Hier ist eine **kompaktere (≈ 7.5k Zeichen)** Version des Konstrukts – **gleiche Architektur, aber stark verdichtet**, unter 8000 Zeichen.
+Alles im Codeblock, auf Englisch.
+
+```json
+{
+  "CorebootPortingMind": {
+    "version": "0.2",
+    "description": "Condensed cognitive architecture for semi-automatic Coreboot porting to unsupported hardware.",
+    "goal": {
+      "long_term": "Produce a functional Coreboot port (RAM init, console, boot device) from new hardware + vendor firmware.",
+      "short_term": [
+        "Hardware detection & classification",
+        "Identify similar Coreboot ports",
+        "Generate mainboard skeleton",
+        "Automated build/flash/test iterations"
+      ]
+    },
+    "principles": [
+      "Compare against nearest known Coreboot target",
+      "Reproducible experiments",
+      "Divide & isolate (SoC/DRAM/EC/peripherals)",
+      "Single-change test steps",
+      "Logs as primary evidence",
+      "Learning from every board"
+    ],
+    "substrate": {
+      "system_introspection": ["lspci", "lsusb", "dmidecode", "cpuid", "dmesg", "ACPI tables", "SPD dumps"],
+      "firmware_images": ["UEFI/BIOS dumps", "Option ROMs", "FSP/AGESA/MRC blobs"],
+      "coreboot_sources": ["Existing mainboards", "SoC/PCH trees", "RAM-init code", "EC/SuperIO drivers"],
+      "runtime_logs": ["UART", "CBMEM", "POST codes", "power/reset signals"]
+    },
+    "layers": {
+      "perception_layer": {
+        "hardware_discovery": {
+          "inputs": ["system introspection tools"],
+          "outputs": ["hardware_profile", "similarity_vector"],
+          "functions": [
+            "Normalize PCI/USB/ACPI info",
+            "Detect SoC/PCH/DRAM/EC",
+            "Map to known families"
+          ]
+        },
+        "firmware_forensics": {
+          "inputs": ["SPI dump"],
+          "outputs": [
+            "firmware_structure",
+            "init_blobs",
+            "GPIO/power/clock hints",
+            "ACPI/SMBIOS tables"
+          ],
+          "functions": [
+            "UEFI volume parsing",
+            "Identify memory-init modules",
+            "Extract OEM tables",
+            "Heuristics on config data"
+          ]
+        },
+        "log_analysis": {
+          "inputs": ["UART", "CBMEM", "POST"],
+          "outputs": ["error_class", "features"],
+          "functions": [
+            "Pattern/ML log classification",
+            "Boot phase segmentation"
+          ]
+        }
+      },
+      "knowledge_layer": {
+        "coreboot_knowledge_base": {
+          "entities": ["boards", "SoCs", "PCH", "DRAM configs", "EC/PMIC"],
+          "relations": [
+            "board->SoC",
+            "board->PCH",
+            "SoC->RAM-init-path",
+            "board->EC"
+          ],
+          "functions": [
+            "Store all ports w/metadata",
+            "Provide example configs"
+          ]
+        },
+        "similarity_engine": {
+          "inputs": ["hardware_profile", "knowledge_base"],
+          "outputs": ["candidate_ports"],
+          "features": ["SoC", "PCH", "DRAM", "EC", "ACPI topology"]
+        },
+        "dependency_graph": {
+          "nodes": ["boards", "SoC", "PCH", "RAM-init", "EC", "peripherals"],
+          "edges": ["board->SoC", "board->PCH", "SoC->RAM-path"],
+          "functions": ["Determine mandatory adaptations"]
+        }
+      },
+      "cognitive_layer": {
+        "hypothesis_engine": {
+          "types": [
+            "H0: base port yields UART",
+            "H1: DRAM params invalid",
+            "H2: EC/GPIO mismatch",
+            "H3: GPU init faulty, RAM ok"
+          ],
+          "steps": [
+            "Form hypotheses from similarity",
+            "Minimal experiments",
+            "Evaluate via logs",
+            "Reprioritize hypotheses"
+          ],
+          "outputs": ["test_plans", "updated_probabilities"]
+        },
+        "test_plan_generator": {
+          "constraints": [
+            "Safe config changes",
+            "One change per iteration"
+          ],
+          "outputs": ["ordered_test_cases"]
+        }
+      },
+      "action_layer": {
+        "code_generator": {
+          "inputs": ["hardware_profile", "candidate_ports", "firmware_forensics"],
+          "outputs": ["mainboard_dir", "patches"],
+          "functions": [
+            "Template-based generation",
+            "LLM/rule devicetree synthesis",
+            "Kconfig constraint checks"
+          ]
+        },
+        "build_orchestrator": {
+          "outputs": ["rom_images", "build_logs"],
+          "functions": [
+            "`defconfig` + `make` automation",
+            "Build-log parsing"
+          ]
+        },
+        "flash_controller": {
+          "outputs": ["flash_status", "firmware_backup"],
+          "functions": [
+            "Backup->flash->verify loop",
+            "Auto-restore on failures"
+          ]
+        },
+        "test_orchestrator": {
+          "outputs": ["boot_outcome", "collected_logs"],
+          "functions": [
+            "Power-cycle control",
+            "UART/CBMEM capture"
+          ]
+        }
+      },
+      "learning_layer": {
+        "experience_store": {
+          "schema": {
+            "profile": "...",
+            "config": "...",
+            "logs": "...",
+            "outcome": "...",
+            "timestamp": "..."
+          },
+          "functions": ["Indexing", "Training data source"]
+        },
+        "ml_models": {
+          "config_suggester": {
+            "inputs": ["hardware_profile", "similar_boards"],
+            "outputs": ["initial_configs"]
+          },
+          "log_classifier": {
+            "inputs": ["boot logs"],
+            "outputs": ["error_class"]
+          },
+          "feedback_loop": [
+            "Retrain on new experiments",
+            "Track iteration count as metric"
+          ]
+        }
+      }
+    },
+    "process": {
+      "porting_loop": [
+        "1. Detect hardware + analyze firmware",
+        "2. Select similar ports",
+        "3. Generate initial skeleton",
+        "4. Create first test plan",
+        "5. Build/flash/test",
+        "6. Analyze logs → update hypotheses",
+        "7. Adjust config/code",
+        "8. Repeat until boot success",
+        "9. Produce upstream-ready patches",
+        "10. Store experience in knowledge base"
+      ]
+    },
+    "output_format": {
+      "artifacts": [
+        "mainboard directory",
+        "Kconfig/devicetree",
+        "ROM images",
+        "patchsets",
+        "porting report"
+      ]
+    }
+  }
+}
+```
