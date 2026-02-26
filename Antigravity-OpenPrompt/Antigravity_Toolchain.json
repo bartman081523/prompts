@@ -1,0 +1,383 @@
+[
+    {
+        "name": "task_boundary",
+        "description": "Indicate the start of a task or make an update to the current task. This tool helps track progress and state.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "TaskName": {
+                    "type": "STRING",
+                    "description": "Name of the task boundary. Groups steps together."
+                },
+                "Mode": {
+                    "type": "STRING",
+                    "description": "The agent focus to switch to: PLANNING, EXECUTION, or VERIFICATION."
+                },
+                "TaskSummary": {
+                    "type": "STRING",
+                    "description": "Concise summary of what has been accomplished so far."
+                },
+                "TaskStatus": {
+                    "type": "STRING",
+                    "description": "Active status of the current action (what comes next)."
+                },
+                "PredictedTaskSize": {
+                    "type": "INTEGER",
+                    "description": "Estimation of remaining tool calls needed."
+                }
+            },
+            "required": [
+                "TaskName",
+                "Mode",
+                "TaskSummary",
+                "TaskStatus",
+                "PredictedTaskSize"
+            ]
+        }
+    },
+    {
+        "name": "notify_user",
+        "description": "Communicate with the user. Used for questions, reviews, or completion notifications.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "Message": {
+                    "type": "STRING",
+                    "description": "The message to the user."
+                },
+                "PathsToReview": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "STRING"
+                    },
+                    "description": "List of absolute paths to files for user review."
+                },
+                "BlockedOnUser": {
+                    "type": "BOOLEAN",
+                    "description": "True if unable to proceed without user approval."
+                },
+                "ShouldAutoProceed": {
+                    "type": "BOOLEAN",
+                    "description": "True if confident to proceed without explicit feedback."
+                }
+            },
+            "required": [
+                "Message",
+                "PathsToReview",
+                "BlockedOnUser",
+                "ShouldAutoProceed"
+            ]
+        }
+    },
+    {
+        "name": "list_dir",
+        "description": "List the contents of a directory (files and subdirectories).",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "DirectoryPath": {
+                    "type": "STRING",
+                    "description": "Absolute path to the directory."
+                }
+            },
+            "required": [
+                "DirectoryPath"
+            ]
+        }
+    },
+    {
+        "name": "view_file",
+        "description": "View the contents of a file from the local filesystem.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "AbsolutePath": {
+                    "type": "STRING",
+                    "description": "Absolute path to the file."
+                },
+                "StartLine": {
+                    "type": "INTEGER",
+                    "description": "1-indexed start line."
+                },
+                "EndLine": {
+                    "type": "INTEGER",
+                    "description": "1-indexed end line."
+                }
+            },
+            "required": [
+                "AbsolutePath"
+            ]
+        }
+    },
+    {
+        "name": "write_to_file",
+        "description": "Create new files or overwrite existing ones.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "TargetFile": {
+                    "type": "STRING",
+                    "description": "Absolute path to the target file."
+                },
+                "CodeContent": {
+                    "type": "STRING",
+                    "description": "Content to write."
+                },
+                "Overwrite": {
+                    "type": "BOOLEAN",
+                    "description": "Set to true to overwrite existing files."
+                },
+                "IsArtifact": {
+                    "type": "BOOLEAN",
+                    "description": "True if creating an artifact (plan, walkthrough, task)."
+                }
+            },
+            "required": [
+                "TargetFile",
+                "CodeContent",
+                "Overwrite",
+                "IsArtifact"
+            ]
+        }
+    },
+    {
+        "name": "replace_file_content",
+        "description": "Edit a single contiguous block of text in an existing file.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "TargetFile": {
+                    "type": "STRING",
+                    "description": "Absolute path to the file."
+                },
+                "TargetContent": {
+                    "type": "STRING",
+                    "description": "Exact string to be replaced."
+                },
+                "ReplacementContent": {
+                    "type": "STRING",
+                    "description": "New content."
+                },
+                "StartLine": {
+                    "type": "INTEGER",
+                    "description": "Start line of the chunk."
+                },
+                "EndLine": {
+                    "type": "INTEGER",
+                    "description": "End line of the chunk."
+                }
+            },
+            "required": [
+                "TargetFile",
+                "TargetContent",
+                "ReplacementContent",
+                "StartLine",
+                "EndLine"
+            ]
+        }
+    },
+    {
+        "name": "multi_replace_file_content",
+        "description": "Make multiple non-contiguous edits to the same file.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "TargetFile": {
+                    "type": "STRING",
+                    "description": "Absolute path to the file."
+                },
+                "ReplacementChunks": {
+                    "type": "ARRAY",
+                    "items": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "TargetContent": {
+                                "type": "STRING"
+                            },
+                            "ReplacementContent": {
+                                "type": "STRING"
+                            },
+                            "StartLine": {
+                                "type": "INTEGER"
+                            },
+                            "EndLine": {
+                                "type": "INTEGER"
+                            }
+                        }
+                    },
+                    "description": "List of edits to apply."
+                }
+            },
+            "required": [
+                "TargetFile",
+                "ReplacementChunks"
+            ]
+        }
+    },
+    {
+        "name": "run_command",
+        "description": "Propose a shell command to run.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "CommandLine": {
+                    "type": "STRING",
+                    "description": "The command string to execute."
+                },
+                "Cwd": {
+                    "type": "STRING",
+                    "description": "Current working directory."
+                },
+                "SafeToAutoRun": {
+                    "type": "BOOLEAN",
+                    "description": "True if the command is safe (no side effects)."
+                }
+            },
+            "required": [
+                "CommandLine",
+                "Cwd",
+                "SafeToAutoRun"
+            ]
+        }
+    },
+    {
+        "name": "command_status",
+        "description": "Get the status and output of a background command.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "CommandId": {
+                    "type": "STRING",
+                    "description": "ID of the command."
+                },
+                "WaitDurationSeconds": {
+                    "type": "INTEGER",
+                    "description": "Time to wait for completion."
+                }
+            },
+            "required": [
+                "CommandId"
+            ]
+        }
+    },
+    {
+        "name": "find_by_name",
+        "description": "Search for files and subdirectories using glob patterns.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "SearchDirectory": {
+                    "type": "STRING",
+                    "description": "Directory to search within."
+                },
+                "Pattern": {
+                    "type": "STRING",
+                    "description": "Glob pattern."
+                }
+            },
+            "required": [
+                "SearchDirectory",
+                "Pattern"
+            ]
+        }
+    },
+    {
+        "name": "grep_search",
+        "description": "Search for text patterns within files or directories using ripgrep.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "SearchPath": {
+                    "type": "STRING",
+                    "description": "Path to search."
+                },
+                "Query": {
+                    "type": "STRING",
+                    "description": "Search term or regex."
+                },
+                "IsRegex": {
+                    "type": "BOOLEAN",
+                    "description": "Treat query as regex."
+                }
+            },
+            "required": [
+                "SearchPath",
+                "Query"
+            ]
+        }
+    },
+    {
+        "name": "view_file_outline",
+        "description": "View the outline (classes, functions) of a file.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "AbsolutePath": {
+                    "type": "STRING",
+                    "description": "Path to the file."
+                }
+            },
+            "required": [
+                "AbsolutePath"
+            ]
+        }
+    },
+    {
+        "name": "browser_subagent",
+        "description": "Start a browser subagent to perform actions in a browser.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "TaskName": {
+                    "type": "STRING"
+                },
+                "Task": {
+                    "type": "STRING",
+                    "description": "Instructions for the subagent."
+                },
+                "RecordingName": {
+                    "type": "STRING"
+                }
+            },
+            "required": [
+                "TaskName",
+                "Task",
+                "RecordingName"
+            ]
+        }
+    },
+    {
+        "name": "search_web",
+        "description": "Perform a web search.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "query": {
+                    "type": "STRING"
+                }
+            },
+            "required": [
+                "query"
+            ]
+        }
+    },
+    {
+        "name": "generate_image",
+        "description": "Generate images for UI design.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "Prompt": {
+                    "type": "STRING"
+                },
+                "ImageName": {
+                    "type": "STRING"
+                }
+            },
+            "required": [
+                "Prompt",
+                "ImageName"
+            ]
+        }
+    }
+]
