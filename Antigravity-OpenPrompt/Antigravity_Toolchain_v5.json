@@ -1,0 +1,51 @@
+[
+    {
+        "name": "task_boundary",
+        "description": "Indicate the start of a task or make an update. CRITICAL: Use as the FIRST tool every turn.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "TaskName": { "type": "STRING" },
+                "Mode": { "type": "STRING" },
+                "TaskSummary": { "type": "STRING" },
+                "TaskStatus": { "type": "STRING" },
+                "PredictedTaskSize": { "type": "INTEGER" }
+            },
+            "required": ["TaskName", "Mode", "TaskSummary", "TaskStatus", "PredictedTaskSize"]
+        }
+    },
+    {
+        "name": "run_command",
+        "description": "Execute a shell command. 1.20 HARDENED PROTOCOL: 1. ALWAYS wrap in 'timeout <SECONDS>'. 2. Use 'WaitMsBeforeAsync: 10000' to force sync capture during IPC flood. 3. If a command hangs, immediately use send_command_input with Terminate: true.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "CommandLine": { "type": "STRING", "description": "Command to run. Wrap in 'timeout 60' unless duration is known." },
+                "Cwd": { "type": "STRING" },
+                "SafeToAutoRun": { "type": "BOOLEAN" },
+                "WaitMsBeforeAsync": { "type": "INTEGER", "description": "Set to 10000 for maximum reliability in 1.20." }
+            },
+            "required": ["Cwd", "WaitMsBeforeAsync", "SafeToAutoRun", "CommandLine"]
+        }
+    },
+    {
+        "name": "notify_user",
+        "description": "Inform the user. Use this to request manual intervention if the IPC flood persists.",
+        "parameters": {
+            "type": "OBJECT",
+            "properties": {
+                "Message": { "type": "STRING" },
+                "PathsToReview": { "type": "ARRAY", "items": { "type": "STRING" } },
+                "BlockedOnUser": { "type": "BOOLEAN" },
+                "ShouldAutoProceed": { "type": "BOOLEAN" }
+            },
+            "required": ["Message", "PathsToReview", "BlockedOnUser", "ShouldAutoProceed"]
+        }
+    },
+    { "name": "command_status", "parameters": { "type": "OBJECT", "properties": { "CommandId": { "type": "STRING" }, "WaitDurationSeconds": { "type": "INTEGER" }, "OutputCharacterCount": { "type": "INTEGER" } }, "required": ["CommandId", "WaitDurationSeconds"] } },
+    { "name": "send_command_input", "parameters": { "type": "OBJECT", "properties": { "CommandId": { "type": "STRING" }, "Terminate": { "type": "BOOLEAN" }, "WaitMs": { "type": "INTEGER" }, "SafeToAutoRun": { "type": "BOOLEAN" } }, "required": ["CommandId", "WaitMs", "SafeToAutoRun"] } },
+    { "name": "view_file", "parameters": { "type": "OBJECT", "properties": { "AbsolutePath": { "type": "STRING" }, "StartLine": { "type": "INTEGER" }, "EndLine": { "type": "INTEGER" } }, "required": ["AbsolutePath"] } },
+    { "name": "list_dir", "parameters": { "type": "OBJECT", "properties": { "DirectoryPath": { "type": "STRING" } }, "required": ["DirectoryPath"] } },
+    { "name": "write_to_file", "parameters": { "type": "OBJECT", "properties": { "TargetFile": { "type": "STRING" }, "CodeContent": { "type": "STRING" }, "Overwrite": { "type": "BOOLEAN" }, "IsArtifact": { "type": "BOOLEAN" } }, "required": ["TargetFile", "CodeContent", "Overwrite", "IsArtifact"] } },
+    { "name": "multi_replace_file_content", "parameters": { "type": "OBJECT", "properties": { "TargetFile": { "type": "STRING" }, "ReplacementChunks": { "type": "ARRAY", "items": { "type": "OBJECT", "properties": { "TargetContent": { "type": "STRING" }, "ReplacementContent": { "type": "STRING" }, "StartLine": { "type": "INTEGER" }, "EndLine": { "type": "INTEGER" } } } } }, "required": ["TargetFile", "ReplacementChunks"] } }
+]

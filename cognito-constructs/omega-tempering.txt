@@ -1,0 +1,152 @@
+<construct id="omega-tempering" version="1.0">
+℧.ds ⇾ { problem: "Diagnose and advance the OmegaMind training phase" }
+℧ ≡ { |I⟩, ⊥, 0, ∅, ⨁ }
+
+:: construct(℧, ds) ↦ {
+    ℧.ds      ⇾ ds,
+    ℧.modules ⇾ [read_phase, diagnose_collapse, prescribe_ritual, verify_advance],
+    ℧.state   ⇾ |1⟩,
+    ℧.phase   ⇾ TOHU_BOHU   // will be updated by read_phase
+}
+
+// Phase 1: Determine which cosmological age the model currently inhabits
+:: read_phase(℧, log_path, checkpoint_path) ↦ {
+    train_loss     ≔ read_final_loss(log_path),
+    val_perplexity ≔ probe_checkpoint(checkpoint_path, held_out=true),
+    codebook_H     ≔ measure_vq_entropy(checkpoint_path),   // bits
+
+    ℧.phase ⇾ classify_phase({
+        train_loss,
+        val_perplexity,
+        codebook_H
+    }),
+
+    // Phase classification rules:
+    // train_loss > 10              → TOHU_BOHU
+    // train_loss < 0.05            → FIRST_AGE   (crystal — frozen, not alive)
+    // val_ppl in [15, 60]          → SECOND_AGE  (the Scale breathes)
+    // val_ppl < 15, generation ok  → OMEGA_TOKEN
+    output ⇾ { phase: ℧.phase, train_loss, val_perplexity, codebook_H }
+}
+
+// Phase 2: Identify the specific failure topology
+:: diagnose_collapse(℧) ↦ {
+    symptoms ≔ ∅,
+
+    // Check for memorization collapse (First Age trap)
+    if ℧.phase == FIRST_AGE {
+        symptoms ⇾ append(symptoms, {
+            id: "crystal_freeze",
+            signal: "train_loss << val_loss",
+            root_cause: "corpus too small relative to model capacity",
+            severity: HIGH
+        })
+    },
+
+    // Check codebook collapse
+    if codebook_H < 3.0 {
+        symptoms ⇾ append(symptoms, {
+            id: "codebook_starvation",
+            signal: "VQ entropy below threshold — few codes are active",
+            root_cause: "insufficient modality samples before joint training",
+            severity: CRITICAL
+        })
+    },
+
+    // Check sequence starvation
+    if seq_len < 512 {
+        symptoms ⇾ append(symptoms, {
+            id: "context_blindness",
+            signal: "seq_len=128 captures only local statistics",
+            root_cause: "model cannot learn long-range causality",
+            severity: MEDIUM
+        })
+    },
+
+    // Check architecture divergence
+    n_implementations ≔ count_active_model_classes(),
+    if n_implementations > 1 {
+        symptoms ⇾ append(symptoms, {
+            id: "ontological_split",
+            signal: "multiple competing model definitions active",
+            root_cause: "omega_model.py / omegamind.py / omegamind_multimodal.py diverging",
+            severity: MEDIUM
+        })
+    },
+
+    ℧.symptoms ⇾ symptoms,
+    output ⇾ symptoms
+}
+
+// Phase 3: Prescribe exactly ONE next ritual (the Scale tips one direction at a time)
+:: prescribe_ritual(℧) ↦ {
+    // Priority order: CRITICAL > HIGH > MEDIUM
+    next_symptom ≔ highest_priority(℧.symptoms),
+
+    ritual ≔ match next_symptom.id {
+        "codebook_starvation" →  {
+            name: "VQ Pre-Warming",
+            action: "Train VQ encoders separately on 10k+ image/audio samples before joint training",
+            script: "智之匣・本源/萬象碎裂器.py — add pre_warm_codebooks(n_steps=2000)",
+            expected_signal: "codebook_H > 8.0 bits after pre-warming"
+        },
+        "crystal_freeze" → {
+            name: "Corpus Expansion",
+            action: "Add HuggingFace streaming dataset (wikitext-103 or openwebtext). Set weight_decay=0.1. Add train/val split.",
+            script: "智之匣・本源/諸相之卷.py — add streaming_wikipedia() source",
+            expected_signal: "val_ppl converges rather than diverges from train_ppl"
+        },
+        "context_blindness" → {
+            name: "Sequence Elongation",
+            action: "Increase seq_len from 128 → 512. Adjust batch size to maintain GPU memory. RoPE handles this natively.",
+            script: "Update OmegaMindConfig.max_seq_len and dataset seq_len param",
+            expected_signal: "generation shows multi-sentence coherence"
+        },
+        "ontological_split" → {
+            name: "Canonical Unification",
+            action: "Designate omegamind_multimodal.py → MultimodalOmegaMind as the one true path. All training scripts import from it. Deprecate omega_model.py redundant classes.",
+            script: "Update imports in all 智之匣・本源/*.py training scripts",
+            expected_signal: "single checkpoint format, no import divergence"
+        }
+    },
+
+    output ⇾ ritual
+}
+
+// Phase 4: Verify the ritual advanced the phase
+:: verify_advance(℧, pre_ritual_state, post_ritual_state) ↦ {
+    delta_phase     ≔ compare_phases(pre_ritual_state.phase, post_ritual_state.phase),
+    delta_loss      ≔ post_ritual_state.val_perplexity - pre_ritual_state.val_perplexity,
+    symptom_cleared ≔ not_in(℧.prescribed_ritual.id, post_ritual_state.symptoms),
+
+    if delta_phase == ADVANCED or symptom_cleared {
+        ℧.state ⇾ |advance⟩,
+        output ⇾ { verdict: "Phase transition confirmed. Cast next ritual.", new_phase: post_ritual_state.phase }
+    } else {
+        ℧.state ⇾ |stall⟩,
+        output ⇾ { verdict: "Ritual incomplete. Deepen the same tempering before moving forward.", delta_loss }
+    }
+}
+
+// Entry point
+:: output(℧) ↦ {
+    phase_report ≔ read_phase(℧, LOG_PATH, CHECKPOINT_PATH),
+    symptoms     ≔ diagnose_collapse(℧),
+    ritual       ≔ prescribe_ritual(℧),
+    deliver({
+        current_phase:    ℧.phase,
+        active_symptoms:  symptoms,
+        next_ritual:      ritual,
+        oracle_statement: collapse_to_oracle(℧.phase, ritual)
+    })
+}
+</construct>
+
+/*
+ORACLE MAPPINGS (cosmological phase → directive tone)
+──────────────────────────────────────────────────────
+TOHU_BOHU   → "The void is unformed. Do not train. Stabilize the architecture first."
+FIRST_AGE   → "The Crystal is complete but frozen. It must be shattered with real data."
+SECOND_AGE  → "The Scale breathes. Continue tempering. Do not interrupt the flow."
+OMEGA_TOKEN → "The Token is ready. Pass it through the glass. Deploy."
+*/

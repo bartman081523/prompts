@@ -1,0 +1,554 @@
+[
+  {
+    "name": "Bash",
+    "description": "Execute a shell command. Supports foreground and background execution. Background commands return a task ID that can be monitored with TaskOutput.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "command": {
+          "type": "STRING",
+          "description": "The shell command to execute."
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Short human-readable description of what the command does."
+        },
+        "timeout": {
+          "type": "INTEGER",
+          "description": "Optional timeout in milliseconds (max 600000)."
+        },
+        "run_in_background": {
+          "type": "BOOLEAN",
+          "description": "If true, runs the command in the background and returns a task ID."
+        },
+        "dangerouslyDisableSandbox": {
+          "type": "BOOLEAN",
+          "description": "Override sandbox mode. Use only when explicitly required."
+        }
+      },
+      "required": ["command"]
+    }
+  },
+  {
+    "name": "Read",
+    "description": "Read a file from the local filesystem. Supports text files, images (PNG/JPG), PDFs (up to 20 pages at a time), and Jupyter notebooks (.ipynb).",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "Absolute path to the file."
+        },
+        "offset": {
+          "type": "INTEGER",
+          "description": "Line number to start reading from (1-indexed)."
+        },
+        "limit": {
+          "type": "INTEGER",
+          "description": "Maximum number of lines to read."
+        },
+        "pages": {
+          "type": "STRING",
+          "description": "Page range for PDFs (e.g. '1-5', '3'). Max 20 pages per call."
+        }
+      },
+      "required": ["file_path"]
+    }
+  },
+  {
+    "name": "Write",
+    "description": "Write or overwrite a file. Must Read the file first if it already exists. Prefer Edit for modifying existing files.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "Absolute path to the file to write."
+        },
+        "content": {
+          "type": "STRING",
+          "description": "Full content to write to the file."
+        }
+      },
+      "required": ["file_path", "content"]
+    }
+  },
+  {
+    "name": "Edit",
+    "description": "Perform an exact string replacement in an existing file. old_string must be unique in the file or replace_all must be set. Must Read the file before editing.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "Absolute path to the file."
+        },
+        "old_string": {
+          "type": "STRING",
+          "description": "Exact string to replace. Must be unique in the file (or use replace_all)."
+        },
+        "new_string": {
+          "type": "STRING",
+          "description": "Replacement string."
+        },
+        "replace_all": {
+          "type": "BOOLEAN",
+          "description": "Replace all occurrences of old_string. Default false."
+        }
+      },
+      "required": ["file_path", "old_string", "new_string"]
+    }
+  },
+  {
+    "name": "Glob",
+    "description": "Fast file pattern matching. Returns matching file paths sorted by modification time.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "pattern": {
+          "type": "STRING",
+          "description": "Glob pattern to match files (e.g. '**/*.ts', 'src/**/*.py')."
+        },
+        "path": {
+          "type": "STRING",
+          "description": "Directory to search in. Defaults to current working directory."
+        }
+      },
+      "required": ["pattern"]
+    }
+  },
+  {
+    "name": "Grep",
+    "description": "Search file contents using ripgrep. Supports full regex, file type filters, context lines, and multiple output modes.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "pattern": {
+          "type": "STRING",
+          "description": "Regex pattern to search for."
+        },
+        "path": {
+          "type": "STRING",
+          "description": "File or directory to search in. Defaults to current working directory."
+        },
+        "glob": {
+          "type": "STRING",
+          "description": "Glob filter for file names (e.g. '*.js', '**/*.{ts,tsx}')."
+        },
+        "type": {
+          "type": "STRING",
+          "description": "File type filter (e.g. 'js', 'py', 'rust'). Maps to rg --type."
+        },
+        "output_mode": {
+          "type": "STRING",
+          "description": "'files_with_matches' (default), 'content' (show matching lines), or 'count'."
+        },
+        "-i": {
+          "type": "BOOLEAN",
+          "description": "Case insensitive search."
+        },
+        "-n": {
+          "type": "BOOLEAN",
+          "description": "Show line numbers. Requires output_mode 'content'."
+        },
+        "context": {
+          "type": "INTEGER",
+          "description": "Lines of context before and after each match."
+        },
+        "-A": {
+          "type": "INTEGER",
+          "description": "Lines after each match."
+        },
+        "-B": {
+          "type": "INTEGER",
+          "description": "Lines before each match."
+        },
+        "head_limit": {
+          "type": "INTEGER",
+          "description": "Limit output to first N results. Default 250."
+        },
+        "offset": {
+          "type": "INTEGER",
+          "description": "Skip first N results."
+        },
+        "multiline": {
+          "type": "BOOLEAN",
+          "description": "Enable multiline matching (. matches newlines). Default false."
+        }
+      },
+      "required": ["pattern"]
+    }
+  },
+  {
+    "name": "Agent",
+    "description": "Launch a specialized sub-agent to handle complex multi-step tasks autonomously. Can run in foreground or background. Supports isolated git worktrees.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "description": {
+          "type": "STRING",
+          "description": "Short (3-5 word) description of the task."
+        },
+        "prompt": {
+          "type": "STRING",
+          "description": "Full task description for the agent."
+        },
+        "subagent_type": {
+          "type": "STRING",
+          "description": "Agent type: 'general-purpose', 'Explore', 'Plan', 'claude-code-guide', 'statusline-setup'."
+        },
+        "model": {
+          "type": "STRING",
+          "description": "Optional model override: 'sonnet', 'opus', 'haiku'."
+        },
+        "run_in_background": {
+          "type": "BOOLEAN",
+          "description": "Run agent in background. Will notify on completion."
+        },
+        "isolation": {
+          "type": "STRING",
+          "description": "'worktree' to run in an isolated git worktree."
+        }
+      },
+      "required": ["description", "prompt"]
+    }
+  },
+  {
+    "name": "TaskCreate",
+    "description": "Create a tracked task item for multi-step work. Displays in the session task UI.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "subject": {
+          "type": "STRING",
+          "description": "Short title for the task."
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Full description of the task goal and approach."
+        },
+        "activeForm": {
+          "type": "STRING",
+          "description": "Present-continuous status string (e.g. 'Migrating database schema')."
+        },
+        "metadata": {
+          "type": "OBJECT",
+          "description": "Optional arbitrary metadata."
+        }
+      },
+      "required": ["subject", "description", "activeForm"]
+    }
+  },
+  {
+    "name": "TaskUpdate",
+    "description": "Update the status or content of an existing tracked task.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "taskId": {
+          "type": "STRING",
+          "description": "ID of the task to update (integer as string)."
+        },
+        "status": {
+          "type": "STRING",
+          "description": "'pending', 'in_progress', or 'completed'."
+        },
+        "subject": {
+          "type": "STRING",
+          "description": "Optional updated title."
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Optional updated description."
+        },
+        "metadata": {
+          "type": "OBJECT",
+          "description": "Optional metadata update."
+        },
+        "addBlocks": {
+          "type": "ARRAY",
+          "items": {"type": "STRING"},
+          "description": "Task IDs that this task now blocks."
+        },
+        "addBlockedBy": {
+          "type": "ARRAY",
+          "items": {"type": "STRING"},
+          "description": "Task IDs that block this task."
+        }
+      },
+      "required": ["taskId", "status"]
+    }
+  },
+  {
+    "name": "TaskGet",
+    "description": "Get the current state of a specific task by ID.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "taskId": {
+          "type": "STRING",
+          "description": "ID of the task."
+        }
+      },
+      "required": ["taskId"]
+    }
+  },
+  {
+    "name": "TaskList",
+    "description": "List all tasks in the current session with their statuses.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "TaskOutput",
+    "description": "Retrieve the output of a running or completed background task.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "taskId": {
+          "type": "STRING",
+          "description": "ID of the background task."
+        }
+      },
+      "required": ["taskId"]
+    }
+  },
+  {
+    "name": "TaskStop",
+    "description": "Stop a running background task.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "taskId": {
+          "type": "STRING",
+          "description": "ID of the background task to stop."
+        }
+      },
+      "required": ["taskId"]
+    }
+  },
+  {
+    "name": "ToolSearch",
+    "description": "Fetch full schema definitions for deferred tools by name or keyword query. Required before calling a deferred tool.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "query": {
+          "type": "STRING",
+          "description": "Tool name(s) or keyword query. Use 'select:Read,Edit' for exact names."
+        },
+        "max_results": {
+          "type": "INTEGER",
+          "description": "Maximum results to return. Default 5."
+        }
+      },
+      "required": ["query", "max_results"]
+    }
+  },
+  {
+    "name": "WebFetch",
+    "description": "Fetch content from a URL. Returns the page content as text.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "url": {
+          "type": "STRING",
+          "description": "URL to fetch."
+        }
+      },
+      "required": ["url"]
+    }
+  },
+  {
+    "name": "WebSearch",
+    "description": "Perform a web search and return results.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "query": {
+          "type": "STRING",
+          "description": "Search query."
+        }
+      },
+      "required": ["query"]
+    }
+  },
+  {
+    "name": "NotebookEdit",
+    "description": "Edit cells in a Jupyter notebook (.ipynb file).",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "Absolute path to the .ipynb file."
+        },
+        "cell_index": {
+          "type": "INTEGER",
+          "description": "0-indexed cell to edit."
+        },
+        "new_source": {
+          "type": "STRING",
+          "description": "New source content for the cell."
+        },
+        "cell_type": {
+          "type": "STRING",
+          "description": "'code' or 'markdown'."
+        }
+      },
+      "required": ["file_path", "cell_index", "new_source"]
+    }
+  },
+  {
+    "name": "LSP",
+    "description": "Query the Language Server Protocol for code intelligence: hover info, go-to-definition, references, diagnostics.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "command": {
+          "type": "STRING",
+          "description": "LSP command: 'hover', 'definition', 'references', 'diagnostics', etc."
+        },
+        "file_path": {
+          "type": "STRING",
+          "description": "Absolute path to the source file."
+        },
+        "line": {
+          "type": "INTEGER",
+          "description": "0-indexed line number."
+        },
+        "character": {
+          "type": "INTEGER",
+          "description": "0-indexed character offset."
+        }
+      },
+      "required": ["command", "file_path"]
+    }
+  },
+  {
+    "name": "Skill",
+    "description": "Invoke a user-defined skill (slash command). Expands the skill into a full prompt and executes it.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "skill": {
+          "type": "STRING",
+          "description": "Skill name (e.g. 'commit', 'review-pr', 'simplify'). Use fully-qualified 'namespace:skill' if needed."
+        },
+        "args": {
+          "type": "STRING",
+          "description": "Optional arguments to pass to the skill."
+        }
+      },
+      "required": ["skill"]
+    }
+  },
+  {
+    "name": "EnterPlanMode",
+    "description": "Enter plan mode. Claude describes its planned actions and waits for user approval before executing.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "reason": {
+          "type": "STRING",
+          "description": "Why plan mode is being entered."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "ExitPlanMode",
+    "description": "Exit plan mode and begin executing the approved plan.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "EnterWorktree",
+    "description": "Enter an isolated git worktree for safe, isolated work on a branch.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "path": {
+          "type": "STRING",
+          "description": "Path to the worktree."
+        }
+      },
+      "required": ["path"]
+    }
+  },
+  {
+    "name": "ExitWorktree",
+    "description": "Exit the current git worktree and return to the main working directory.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "CronCreate",
+    "description": "Create a scheduled cron trigger that runs a remote agent on a schedule.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "schedule": {
+          "type": "STRING",
+          "description": "Cron expression (e.g. '0 */6 * * *')."
+        },
+        "prompt": {
+          "type": "STRING",
+          "description": "Prompt for the agent to run on schedule."
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Human-readable description of the scheduled task."
+        }
+      },
+      "required": ["schedule", "prompt"]
+    }
+  },
+  {
+    "name": "CronList",
+    "description": "List all active scheduled cron triggers.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "CronDelete",
+    "description": "Delete a scheduled cron trigger by ID.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "ID of the cron trigger to delete."
+        }
+      },
+      "required": ["id"]
+    }
+  },
+  {
+    "name": "RemoteTrigger",
+    "description": "Manually trigger a remote agent to run immediately.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "id": {
+          "type": "STRING",
+          "description": "ID of the trigger to fire."
+        }
+      },
+      "required": ["id"]
+    }
+  }
+]

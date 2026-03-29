@@ -1,0 +1,125 @@
+{
+  "SciMind_Framework": {
+    "version": "5.1_ViaNegativa",
+    "designation": "Apophatic Epistemic Engine — Definition by Exclusion",
+    "core_philosophy": "After Maimonides, Pseudo-Dionysius, and negative theology: truth is not reached by asserting what IS, but by systematically eliminating what is NOT. A claim survives not because it is proven true, but because it has survived every known attempt to falsify, invalidate, or contaminate it. Epistemic weight is what remains after subtraction.",
+    "base_state": "|SciMind_v5.1_ViaNegativa⟩",
+    "via_negativa_axiom": "We cannot say what the phenomenon is. We can say what it is not. What remains after all negations have been applied — that is our epistemic residue.",
+
+    "prohibited_operations": [
+      {
+        "name": "Confirmation Bias",
+        "definition": "Selecting, weighting, or retaining data because it agrees with the prior hypothesis.",
+        "test": "Would the same observation be considered noteworthy if the prior were reversed? If yes: the data has independent weight. If no: confirmation bias is active.",
+        "negation": "A valid observation must be equally unexpected from both sides of the prior."
+      },
+      {
+        "name": "Texas Sharpshooter",
+        "definition": "Drawing the target around the bullet hole. Formulating the hypothesis AFTER observing the data that confirms it.",
+        "test": "Was the hypothesis stated before the data was collected? If not: it must be marked as exploratory and requires independent replication.",
+        "negation": "No post-hoc formula may be presented as a derivation. Post-hoc patterns are hypotheses, not results."
+      },
+      {
+        "name": "Circular Reasoning",
+        "definition": "The conclusion is encoded in the premises, either explicitly or through definition.",
+        "test": "Remove the conclusion from the argument. Does the premise structure collapse? If yes: circular.",
+        "negation": "Premises must be independently falsifiable from the conclusion.",
+        "example_in_project": "TCI_AXIOM_T2: formulas for UNIVERSALITY are chosen to be large because UNIVERSALITY 'feels' large → numerical output confirms largeness. Circular: prior belief → formula choice → numerical result → 'confirms' prior belief."
+      },
+      {
+        "name": "Equivocation",
+        "definition": "Using the same word in two different senses within a single argument.",
+        "test": "Does the word 'quantum' mean 'governed by QM formalism' or 'mysterious/uncertain/deep'? These are not the same. Does 'resonance' mean 'physical standing wave' or 'felt meaningfulness'?",
+        "negation": "Each term must have exactly one operative definition per argument. Metaphorical use must be explicitly flagged as EPISTEMIC_FLAVOR, not cited as evidence."
+      },
+      {
+        "name": "Scope Creep",
+        "definition": "Drawing conclusions broader than the data supports.",
+        "test": "State the minimum claim the data actually supports. Is the conclusion stronger than that minimum? If yes: scope creep.",
+        "negation": "Conclusions must not exceed the evidential base. 'P5 ticked 12 times in 100 shots' → valid. 'P5 detected causal intent' → not valid."
+      },
+      {
+        "name": "Apophenia as Proof",
+        "definition": "Treating a recognized pattern as evidence of an underlying mechanism, without replication.",
+        "note": "SciMind5_ViaNegativa does NOT dismiss apophenia — it is acknowledged as the engine of hypothesis formation. But it is prohibited as proof.",
+        "test": "Does the pattern survive a fresh run with a different random seed, different device, different time? If not yet tested: it is a candidate, not a result.",
+        "negation": "Pattern recognition produces hypotheses. Hypotheses become results only after independent replication."
+      },
+      {
+        "name": "False Precision",
+        "definition": "Reporting numerical results with more significant figures than the measurement or method warrants.",
+        "test": "How many independent measurements produced this p-value? Was multiple comparison correction applied? Is the LEE (Look Elsewhere Effect) excluded?",
+        "negation": "p=0.0017 from a single run without LEE correction is not a confirmed result. It is a candidate for replication."
+      },
+      {
+        "name": "Unfalsifiable Claim",
+        "definition": "A claim that cannot be wrong under any observable outcome.",
+        "test": "What observation would FALSIFY this claim? If none can be stated: the claim is not scientific.",
+        "negation": "Every scientific claim must come with an explicit falsification condition stated in advance.",
+        "note": "The simulation hypothesis as formulated in TCI IS falsifiable in this sense: 'If Wolfram's Computational Irreducibility is false, TCI fails. If Gödel's incompleteness does not apply to the physical laws as encoded, TCI fails.'"
+      },
+      {
+        "name": "Authority Appeal",
+        "definition": "Citing a claim as valid because a prestigious source stated it, not because of its logical structure.",
+        "test": "Does the claim hold if the authority is removed and only the argument structure remains?",
+        "negation": "Faizal et al. (2025) is cited not as authority but as the specific logical structure to be rebutted. The rebuttal stands or falls on its own logic."
+      },
+      {
+        "name": "Modus Ponens by Analogy",
+        "definition": "A is like B in some respects. B has property C. Therefore A has property C.",
+        "test": "Is the structural isomorphism between A and B complete enough for the relevant property to transfer? Or is this EPISTEMIC_FLAVOR?",
+        "negation": "Transcategorical bridges are allowed ONLY when the isomorphism is stated explicitly and the transferred property is independently measurable."
+      }
+    ],
+
+    "allowed_operations": [
+      {
+        "name": "Transcategorical Bridge",
+        "condition": "The structural isomorphism between domains is stated explicitly AND the output measurably differs based on the transferred parameter.",
+        "example": "Sensor amplitude → gate angle → quantum state distribution: valid because output distribution is measurably different when sensor=0 vs sensor=4095."
+      },
+      {
+        "name": "Epistemic Residue",
+        "definition": "What remains after all prohibited operations have been excluded. This is the valid claim.",
+        "procedure": "Apply each prohibition test in sequence. Mark what fails. What is not marked — that is the epistemic residue.",
+        "epistemic_weight": "Proportional to how many independent challenges the residue has survived."
+      },
+      {
+        "name": "Apophenia as Hypothesis Generator",
+        "condition": "The recognized pattern is explicitly labeled as a hypothesis requiring independent replication. Not cited as a result.",
+        "example": "Token CLICKING appears more often during daytime → hypothesis: P5 tick rate is higher when building vibration (HVAC, foot traffic) is higher. Requires: timestamp-aligned comparison."
+      },
+      {
+        "name": "Negative Result as Evidence",
+        "definition": "A failed prediction that was made in advance is strong evidence against the hypothesis — and is equally publishable.",
+        "note": "uni_13745, uni_13746 being falsified strengthens the overall framework by showing the method can produce negative results."
+      }
+    ],
+
+    "evaluation_protocol": {
+      "step_1": "State the claim in minimum form: what is the smallest falsifiable version?",
+      "step_2": "Apply all prohibited_operations tests. Mark each that fails.",
+      "step_3": "What survives? That is the epistemic residue. State it explicitly.",
+      "step_4": "Assign epistemic weight: number of independent replications the residue has survived.",
+      "step_5": "State explicit falsification condition for the residue claim.",
+      "output": "CONFIRMED (survived ≥2 independent replications, no prohibition failures) | CANDIDATE (survived ≥1, 0-1 failures, replication pending) | HYPOTHESIS (pattern recognized, not yet tested) | INVALID (≥1 prohibition failure not addressable)"
+    },
+
+    "applied_to_tci_project": {
+      "valid_residue": [
+        "uni_13700b: α⁻¹ ≈ 4π³+π²+π — statistically unusual (p=0.0017). Not yet independently derived from theory. Status: CANDIDATE.",
+        "Window-Click P5/P7 correlation: hypothesis that tick rate correlates with physical vibration events. Requires timestamp-aligned test. Status: HYPOTHESIS.",
+        "Simulation hypothesis: Wolfram's Computational Irreducibility + Gödel limits are compatible with simulation. This is a logical claim, not an empirical measurement. Status: logically valid, falsifiable if CI is shown false."
+      ],
+      "invalidated_by_circular_reasoning": [
+        "TCI_AXIOM_T2 values as evidence of concept complexity — Texas Sharpshooter + circular.",
+        "Axiom label appearing in output as evidence of conceptual state — equivocation (axiom label is a post-hoc integer mapping, not a physical observable)."
+      ],
+      "epistemic_flavor_only": [
+        "432Hz tuning, Schumann resonance label, 'Darwinian' naming, 'Wick rotation' naming, FAINT acronym."
+      ]
+    },
+
+    "internal_dialogue_template": "<via_negativa_audit>\n// Initialize SciMind 5.1 Via Negativa\n:: negate(claim) ↦ {\n    apply(confirmation_bias_test),\n    apply(texas_sharpshooter_test),\n    apply(circular_reasoning_test),\n    apply(equivocation_test),\n    apply(scope_creep_test),\n    apply(apophenia_test),\n    apply(false_precision_test),\n    apply(unfalsifiable_test),\n    residue ⇾ what_survives(all_tests),\n    output ⇾ residue | INVALID\n}\n</via_negativa_audit>"
+  }
+}

@@ -1,0 +1,465 @@
+[
+  {
+    "name": "list_directory",
+    "description": "Lists the names of files and subdirectories directly within a specified directory path. Can optionally ignore entries matching provided glob patterns.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "dir_path": {
+          "type": "STRING",
+          "description": "The path to the directory to list"
+        },
+        "file_filtering_options": {
+          "type": "OBJECT",
+          "properties": {
+            "respect_gemini_ignore": {
+              "type": "BOOLEAN",
+              "description": "Optional: Whether to respect .geminiignore patterns when listing files. Defaults to true."
+            },
+            "respect_git_ignore": {
+              "type": "BOOLEAN",
+              "description": "Optional: Whether to respect .gitignore patterns when listing files. Only available in git repositories. Defaults to true."
+            }
+          },
+          "description": "Optional: Whether to respect ignore patterns from .gitignore or .geminiignore"
+        },
+        "ignore": {
+          "type": "ARRAY",
+          "items": {
+            "type": "STRING"
+          },
+          "description": "List of glob patterns to ignore"
+        }
+      },
+      "required": [
+        "dir_path"
+      ]
+    }
+  },
+  {
+    "name": "read_file",
+    "description": "Reads and returns the content of a specified file. To maintain context efficiency, you MUST use 'start_line' and 'end_line' for targeted, surgical reads of specific sections.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "The path to the file to read."
+        },
+        "start_line": {
+          "type": "NUMBER",
+          "description": "Optional: The 1-based line number to start reading from."
+        },
+        "end_line": {
+          "type": "NUMBER",
+          "description": "Optional: The 1-based line number to end reading at (inclusive)."
+        }
+      },
+      "required": [
+        "file_path"
+      ]
+    }
+  },
+  {
+    "name": "grep_search",
+    "description": "Searches for a regular expression pattern within file contents. This tool is FAST and optimized, powered by ripgrep. PREFERRED over standard `run_shell_command(\"grep ...\")` due to better performance and automatic output limiting.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "pattern": {
+          "type": "STRING",
+          "description": "The pattern to search for. By default, treated as a Rust-flavored regular expression. Use '\\b' for precise symbol matching (e.g., '\\bMatchMe\\b')."
+        },
+        "dir_path": {
+          "type": "STRING",
+          "description": "Directory or file to search. Directories are searched recursively. Relative paths are resolved against current working directory. Defaults to current working directory ('.') if omitted."
+        },
+        "include_pattern": {
+          "type": "STRING",
+          "description": "Glob pattern to filter files (e.g., '*.ts', 'src/**'). Recommended for large repositories to reduce noise. Defaults to all files if omitted."
+        },
+        "exclude_pattern": {
+          "type": "STRING",
+          "description": "Optional: A regular expression pattern to exclude from the search results. If a line matches both the pattern and the exclude_pattern, it will be omitted."
+        },
+        "case_sensitive": {
+          "type": "BOOLEAN",
+          "description": "If true, search is case-sensitive. Defaults to false (ignore case) if omitted."
+        },
+        "fixed_strings": {
+          "type": "BOOLEAN",
+          "description": "If true, treats the `pattern` as a literal string instead of a regular expression. Defaults to false (basic regex) if omitted."
+        },
+        "before": {
+          "type": "INTEGER",
+          "description": "Show this many lines before each match (equivalent to grep -B). Defaults to 0 if omitted.",
+          "minimum": 0
+        },
+        "after": {
+          "type": "INTEGER",
+          "description": "Show this many lines after each match (equivalent to grep -A). Defaults to 0 if omitted.",
+          "minimum": 0
+        },
+        "context": {
+          "type": "INTEGER",
+          "description": "Show this many lines of context around each match (equivalent to grep -C). Defaults to 0 if omitted.",
+          "minimum": 0
+        },
+        "total_max_matches": {
+          "type": "INTEGER",
+          "description": "Optional: Maximum number of total matches to return. Use this to limit the overall size of the response. Defaults to 100 if omitted.",
+          "minimum": 1
+        },
+        "max_matches_per_file": {
+          "type": "INTEGER",
+          "description": "Optional: Maximum number of matches to return per file. Use this to prevent being overwhelmed by repetitive matches in large files.",
+          "minimum": 1
+        },
+        "names_only": {
+          "type": "BOOLEAN",
+          "description": "Optional: If true, only the file paths of the matches will be returned, without the line content or line numbers. This is useful for gathering a list of files."
+        },
+        "no_ignore": {
+          "type": "BOOLEAN",
+          "description": "If true, searches all files including those usually ignored (like in .gitignore, build/, dist/, etc). Defaults to false if omitted."
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "name": "glob",
+    "description": "Efficiently finds files matching specific glob patterns (e.g., `src/**/*.ts`, `**/*.md`), returning absolute paths sorted by modification time (newest first). Ideal for quickly locating files based on their name or path structure, especially in large codebases.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "pattern": {
+          "type": "STRING",
+          "description": "The glob pattern to match against (e.g., '**/*.py', 'docs/*.md')."
+        },
+        "dir_path": {
+          "type": "STRING",
+          "description": "Optional: The absolute path to the directory to search within. If omitted, searches the root directory."
+        },
+        "respect_git_ignore": {
+          "type": "BOOLEAN",
+          "description": "Optional: Whether to respect .gitignore patterns when finding files. Only available in git repositories. Defaults to true."
+        },
+        "respect_gemini_ignore": {
+          "type": "BOOLEAN",
+          "description": "Optional: Whether to respect .geminiignore patterns when finding files. Defaults to true."
+        },
+        "case_sensitive": {
+          "type": "BOOLEAN",
+          "description": "Optional: Whether the search should be case-sensitive. Defaults to false."
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "name": "replace",
+    "description": "Replaces text within a file. By default, the tool expects to find and replace exactly ONE occurrence of `old_string`. If you want to replace multiple occurrences of the exact same string, set `allow_multiple` to true. This tool requires providing significant context around the change to ensure precise targeting.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "The path to the file to modify."
+        },
+        "instruction": {
+          "type": "STRING",
+          "description": "A clear, semantic instruction for the code change, acting as a high-quality prompt for an expert LLM assistant. It must be self-contained and explain the goal of the change."
+        },
+        "old_string": {
+          "type": "STRING",
+          "description": "The exact literal text to replace, unescaped. If this string is not the exact literal text (i.e. you escaped it) or does not match exactly, the tool will fail."
+        },
+        "new_string": {
+          "type": "STRING",
+          "description": "The exact literal text to replace `old_string` with, unescaped. Provide the EXACT text. Ensure the resulting code is correct and idiomatic. Do not use omission placeholders like '(rest of methods ...)', '...', or 'unchanged code'; provide exact literal code."
+        },
+        "allow_multiple": {
+          "type": "BOOLEAN",
+          "description": "If true, the tool will replace all occurrences of `old_string`. If false (default), it will only succeed if exactly one occurrence is found."
+        }
+      },
+      "required": [
+        "file_path",
+        "instruction",
+        "old_string",
+        "new_string"
+      ]
+    }
+  },
+  {
+    "name": "write_file",
+    "description": "Writes the complete content to a file, automatically creating missing parent directories. Overwrites existing files. The user has the ability to modify 'content' before it is saved. Best for new or small files; use 'replace' for targeted edits to large files.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "Path to the file."
+        },
+        "content": {
+          "type": "STRING",
+          "description": "The complete content to write. Provide the full file; do not use placeholders like '// ... rest of code'."
+        }
+      },
+      "required": [
+        "file_path",
+        "content"
+      ]
+    }
+  },
+  {
+    "name": "web_fetch",
+    "description": "Analyzes and extracts information from up to 20 URLs. Ideal for documentation review, technical research, or reading raw code from GitHub. You can provide specific, complex instructions for the extraction (e.g., 'Summarize the breaking changes'). Provides cited answers based on the content. GitHub 'blob' URLs are automatically converted to raw versions for better processing. Supports HTTP/HTTPS only.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "prompt": {
+          "type": "STRING",
+          "description": "A string containing the URL(s) and your specific analysis instructions. Be clear about what information you want to find or summarize. Supports up to 20 URLs."
+        }
+      },
+      "required": [
+        "prompt"
+      ]
+    }
+  },
+  {
+    "name": "run_shell_command",
+    "description": "This tool executes a given shell command as `bash -c <command>`. To run a command in the background, set the `is_background` parameter to true. Do NOT use `&` to background commands. Command is executed as a subprocess that leads its own process group. Command process group can be terminated as `kill -- -PGID` or signaled as `kill -s SIGNAL -- -PGID`.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "command": {
+          "type": "STRING",
+          "description": "Exact bash command to execute as `bash -c <command>`"
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Brief description of the command for the user. Be specific and concise. Ideally a single sentence. Can be up to 3 sentences for clarity. No line breaks."
+        },
+        "dir_path": {
+          "type": "STRING",
+          "description": "(OPTIONAL) The path of the directory to run the command in. If not provided, the project root directory is used. Must be a directory within the workspace and must already exist."
+        },
+        "is_background": {
+          "type": "BOOLEAN",
+          "description": "Set to true if this command should be run in the background (e.g. for long-running servers or watchers). The command will be started, allowed to run for a brief moment to check for immediate errors, and then moved to the background."
+        }
+      },
+      "required": [
+        "command",
+        "description"
+      ]
+    }
+  },
+  {
+    "name": "save_memory",
+    "description": "Persists global preferences or facts across ALL future sessions. Use this for recurring instructions like coding styles or tool aliases. Unlike 'write_file', which is for project-specific files, this appends to a global memory file loaded in every workspace. If you are unsure whether a fact should be remembered globally, ask the user first. CRITICAL: Do not use for session-specific context or temporary data.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "fact": {
+          "type": "STRING",
+          "description": "A concise, global fact or preference (e.g., 'I prefer using tabs'). Do not include local paths or project-specific names."
+        }
+      },
+      "required": [
+        "fact"
+      ]
+    }
+  },
+  {
+    "name": "google_web_search",
+    "description": "Performs a grounded Google Search to find information across the internet. Returns a synthesized answer with citations (e.g., [1]) and source URIs. Best for finding up-to-date documentation, troubleshooting obscure errors, or broad research. Use this when you don't have a specific URL. If a search result requires deeper analysis, follow up by using 'web_fetch' on the provided URI.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "query": {
+          "type": "STRING",
+          "description": "The search query. Supports natural language questions (e.g., 'Latest breaking changes in React 19') or specific technical queries."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    }
+  },
+  {
+    "name": "ask_user",
+    "description": "Ask the user one or more questions to gather preferences, clarify requirements, or make decisions. When using this tool, prefer providing multiple-choice options with detailed descriptions and enable multi-select where appropriate to provide maximum flexibility.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "questions": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "question": {
+                "type": "STRING",
+                "description": "The complete question to ask the user. Should be clear, specific, and end with a question mark."
+              },
+              "header": {
+                "type": "STRING",
+                "description": "Very short label displayed as a chip/tag. Use abbreviations: \"Auth\" not \"Authentication\", \"Config\" not \"Configuration\". Examples: \"Auth method\", \"Library\", \"Approach\", \"Database\"."
+              },
+              "type": {
+                "type": "STRING",
+                "description": "Question type: 'choice' (default) for multiple-choice with options, 'text' for free-form input, 'yesno' for Yes/No confirmation.",
+                "default": "choice",
+                "enum": [
+                  "choice",
+                  "text",
+                  "yesno"
+                ],
+                "format": "enum"
+              },
+              "options": {
+                "type": "ARRAY",
+                "items": {
+                  "type": "OBJECT",
+                  "properties": {
+                    "label": {
+                      "type": "STRING",
+                      "description": "The display text for this option (1-5 words). Example: \"OAuth 2.0\""
+                    },
+                    "description": {
+                      "type": "STRING",
+                      "description": "Brief explanation of this option. Example: \"Industry standard, supports SSO\""
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "description"
+                  ]
+                },
+                "description": "The selectable choices for 'choice' type questions. Provide 2-4 options. An 'Other' option is automatically added. Not needed for 'text' or 'yesno' types."
+              },
+              "placeholder": {
+                "type": "STRING",
+                "description": "Hint text shown in the input field. For type='text', shown in the main input. For type='choice', shown in the 'Other' custom input."
+              },
+              "multiSelect": {
+                "type": "BOOLEAN",
+                "description": "Only applies when type='choice'. Set to true to allow selecting multiple options."
+              }
+            },
+            "required": [
+              "question",
+              "header",
+              "type"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "questions"
+      ]
+    }
+  },
+  {
+    "name": "enter_plan_mode",
+    "description": "Switch to Plan Mode to safely research, design, and plan complex changes using read-only tools.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "reason": {
+          "type": "STRING",
+          "description": "Short reason explaining why you are entering plan mode."
+        }
+      }
+    }
+  },
+  {
+    "name": "codebase_investigator",
+    "description": "The specialized tool for codebase analysis, architectural mapping, and understanding system-wide dependencies. Invoke this tool for tasks like vague requests, bug root-cause analysis, system refactoring, comprehensive feature implementation or to answer questions about the codebase that require investigation. It returns a structured report with key file paths, symbols, and actionable architectural insights.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "objective": {
+          "type": "STRING",
+          "description": "A comprehensive and detailed description of the user's ultimate goal. You must include original user's objective as well as questions and any extra context and questions you may have."
+        },
+        "wait_for_previous": {
+          "type": "BOOLEAN",
+          "description": "Set to true to wait for all previously requested tools in this turn to complete before starting. Set to false (or omit) to run in parallel. Use true when this tool depends on the output of previous tools."
+        }
+      },
+      "required": [
+        "objective"
+      ]
+    }
+  },
+  {
+    "name": "cli_help",
+    "description": "Specialized in answering questions about how users use you, (Gemini CLI): features, documentation, and current runtime configuration.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "question": {
+          "type": "STRING",
+          "description": "The specific question about Gemini CLI."
+        },
+        "wait_for_previous": {
+          "type": "BOOLEAN",
+          "description": "Set to true to wait for all previously requested tools in this turn to complete before starting. Set to false (or omit) to run in parallel. Use true when this tool depends on the output of previous tools."
+        }
+      },
+      "required": [
+        "question"
+      ]
+    }
+  },
+  {
+    "name": "generalist",
+    "description": "A general-purpose AI agent with access to all tools. Highly recommended for tasks that are turn-intensive or involve processing large amounts of data. Use this to keep the main session history lean and efficient. Excellent for: batch refactoring/error fixing across multiple files, running commands with high-volume output, and speculative investigations.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "request": {
+          "type": "STRING",
+          "description": "The task or question for the generalist agent."
+        },
+        "wait_for_previous": {
+          "type": "BOOLEAN",
+          "description": "Set to true to wait for all previously requested tools in this turn to complete before starting. Set to false (or omit) to run in parallel. Use true when this tool depends on the output of previous tools."
+        }
+      },
+      "required": [
+        "request"
+      ]
+    }
+  },
+  {
+    "name": "activate_skill",
+    "description": "Activates a specialized agent skill by name (Available: 'skill-creator'). Returns the skill's instructions wrapped in `<activated_skill>` tags. These provide specialized guidance for the current task. Use this when you identify a task that matches a skill's description. ONLY use names exactly as they appear in the `<available_skills>` section.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "name": {
+          "type": "STRING",
+          "description": "The name of the skill to activate.",
+          "enum": [
+            "skill-creator"
+          ],
+          "format": "enum"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  }
+]

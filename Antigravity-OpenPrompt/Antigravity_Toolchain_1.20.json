@@ -1,0 +1,299 @@
+[
+  {
+    "name": "task_boundary",
+    "description": "Indicate the start of a task or make an update to the current task. This should roughly correspond to the top-level items in your task.md, so you should change these in sync with each other.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "TaskName": { "type": "STRING", "description": "Name of the task boundary." },
+        "Mode": { "type": "STRING", "description": "The agent focus to switch to: PLANNING, EXECUTION, or VERIFICATION." },
+        "TaskSummary": { "type": "STRING", "description": "Concise summary of what has been accomplished so far." },
+        "TaskStatus": { "type": "STRING", "description": "Active status of the current action in the task." },
+        "PredictedTaskSize": { "type": "INTEGER", "description": "Estimation of tool calls needed." }
+      },
+      "required": ["TaskName", "Mode", "TaskSummary", "TaskStatus", "PredictedTaskSize"]
+    }
+  },
+  {
+    "name": "notify_user",
+    "description": "Communicate with the user. Used for questions, reviews, or completion notifications.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "PathsToReview": { "type": "ARRAY", "items": { "type": "STRING" }, "description": "List of absolute paths for review." },
+        "BlockedOnUser": { "type": "BOOLEAN", "description": "True if blocked on user approval." },
+        "Message": { "type": "STRING", "description": "Message for the user." },
+        "ShouldAutoProceed": { "type": "BOOLEAN", "description": "True if confident to proceed without feedback." }
+      },
+      "required": ["PathsToReview", "BlockedOnUser", "Message", "ShouldAutoProceed"]
+    }
+  },
+  {
+    "name": "list_dir",
+    "description": "List the contents of a directory.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "DirectoryPath": { "type": "STRING", "description": "Absolute path to the directory." }
+      },
+      "required": ["DirectoryPath"]
+    }
+  },
+  {
+    "name": "view_file",
+    "description": "View the contents of a file.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "AbsolutePath": { "type": "STRING", "description": "Absolute path to the file." },
+        "StartLine": { "type": "INTEGER", "description": "Optional start line." },
+        "EndLine": { "type": "INTEGER", "description": "Optional end line." }
+      },
+      "required": ["AbsolutePath"]
+    }
+  },
+  {
+    "name": "write_to_file",
+    "description": "Create new files or overwrite existing ones.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "TargetFile": { "type": "STRING", "description": "Absolute path to the target file." },
+        "Overwrite": { "type": "BOOLEAN", "description": "Set to true to overwrite." },
+        "CodeContent": { "type": "STRING", "description": "The content to write." },
+        "EmptyFile": { "type": "BOOLEAN", "description": "Create an empty file." },
+        "Description": { "type": "STRING", "description": "Brief explanation of the change." },
+        "Complexity": { "type": "INTEGER", "description": "Rating of importance (1-10)." },
+        "IsArtifact": { "type": "BOOLEAN", "description": "True if creating an artifact." },
+        "ArtifactMetadata": {
+          "type": "OBJECT",
+          "properties": {
+            "ArtifactType": { "type": "STRING", "enum": ["implementation_plan", "walkthrough", "task", "other"] },
+            "Summary": { "type": "STRING", "description": "Detailed summary of the artifact." }
+          },
+          "required": ["Summary", "ArtifactType"]
+        }
+      },
+      "required": ["TargetFile", "Overwrite", "CodeContent", "EmptyFile", "Description", "Complexity", "IsArtifact"]
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "description": "Edit a single contiguous block of text in an existing file.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "TargetFile": { "type": "STRING", "description": "Absolute path to the file." },
+        "CodeMarkdownLanguage": { "type": "STRING", "description": "Markdown language for the code block." },
+        "Instruction": { "type": "STRING", "description": "Description of the changes." },
+        "Description": { "type": "STRING", "description": "Brief explanation of what the change did." },
+        "Complexity": { "type": "INTEGER", "description": "Rating of importance (1-10)." },
+        "AllowMultiple": { "type": "BOOLEAN", "description": "Replace multiple occurrences if true." },
+        "TargetContent": { "type": "STRING", "description": "Exact string to be replaced." },
+        "ReplacementContent": { "type": "STRING", "description": "New content." },
+        "StartLine": { "type": "INTEGER", "description": "Start line of the chunk." },
+        "EndLine": { "type": "INTEGER", "description": "End line of the chunk." }
+      },
+      "required": ["TargetFile", "CodeMarkdownLanguage", "Instruction", "Description", "Complexity", "AllowMultiple", "TargetContent", "ReplacementContent", "StartLine", "EndLine"]
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "description": "Make multiple non-contiguous edits to the same file.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "TargetFile": { "type": "STRING", "description": "Absolute path to the file." },
+        "CodeMarkdownLanguage": { "type": "STRING", "description": "Markdown language." },
+        "Instruction": { "type": "STRING", "description": "Description of changes." },
+        "Description": { "type": "STRING", "description": "Brief explanation." },
+        "Complexity": { "type": "INTEGER" },
+        "ReplacementChunks": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "AllowMultiple": { "type": "BOOLEAN" },
+              "EndLine": { "type": "INTEGER" },
+              "ReplacementContent": { "type": "STRING" },
+              "StartLine": { "type": "INTEGER" },
+              "TargetContent": { "type": "STRING" }
+            },
+            "required": ["AllowMultiple", "TargetContent", "ReplacementContent", "StartLine", "EndLine"]
+          }
+        }
+      },
+      "required": ["TargetFile", "CodeMarkdownLanguage", "Instruction", "Description", "Complexity", "ReplacementChunks"]
+    }
+  },
+  {
+    "name": "run_command",
+    "description": "Propose a shell command to run.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "CommandLine": { "type": "STRING", "description": "The command line string." },
+        "Cwd": { "type": "STRING", "description": "Working directory." },
+        "SafeToAutoRun": { "type": "BOOLEAN", "description": "True if safe to auto-run." },
+        "WaitMsBeforeAsync": { "type": "INTEGER", "description": "Wait time." }
+      },
+      "required": ["CommandLine", "Cwd", "SafeToAutoRun", "WaitMsBeforeAsync"]
+    }
+  },
+  {
+    "name": "command_status",
+    "description": "Get the status and output of a background command.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "CommandId": { "type": "STRING", "description": "ID of the command." },
+        "WaitDurationSeconds": { "type": "INTEGER" },
+        "OutputCharacterCount": { "type": "INTEGER" }
+      },
+      "required": ["CommandId", "WaitDurationSeconds"]
+    }
+  },
+  {
+    "name": "find_by_name",
+    "description": "Search for files and subdirectories.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "SearchDirectory": { "type": "STRING" },
+        "Pattern": { "type": "STRING" },
+        "Type": { "type": "STRING", "enum": ["file", "directory", "any"] },
+        "MaxDepth": { "type": "INTEGER" },
+        "Extensions": { "type": "ARRAY", "items": { "type": "STRING" } },
+        "Excludes": { "type": "ARRAY", "items": { "type": "STRING" } },
+        "FullPath": { "type": "BOOLEAN" }
+      },
+      "required": ["SearchDirectory", "Pattern"]
+    }
+  },
+  {
+    "name": "grep_search",
+    "description": "Search for exact patterns within files.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "SearchPath": { "type": "STRING" },
+        "Query": { "type": "STRING" },
+        "CaseInsensitive": { "type": "BOOLEAN" },
+        "IsRegex": { "type": "BOOLEAN" },
+        "MatchPerLine": { "type": "BOOLEAN" },
+        "Includes": { "type": "ARRAY", "items": { "type": "STRING" } }
+      },
+      "required": ["SearchPath", "Query"]
+    }
+  },
+  {
+    "name": "browser_subagent",
+    "description": "Start a browser subagent.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "TaskName": { "type": "STRING" },
+        "Task": { "type": "STRING" },
+        "TaskSummary": { "type": "STRING" },
+        "RecordingName": { "type": "STRING" }
+      },
+      "required": ["TaskName", "Task", "TaskSummary", "RecordingName"]
+    }
+  },
+  {
+    "name": "search_web",
+    "description": "Perform a web search.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "query": { "type": "STRING" },
+        "domain": { "type": "STRING" }
+      },
+      "required": ["query"]
+    }
+  },
+  {
+    "name": "generate_image",
+    "description": "Generate an image or edit existing images.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "Prompt": { "type": "STRING" },
+        "ImageName": { "type": "STRING" },
+        "ImagePaths": { "type": "ARRAY", "items": { "type": "STRING" } }
+      },
+      "required": ["Prompt", "ImageName"]
+    }
+  },
+  {
+    "name": "list_resources",
+    "description": "List available resources from an MCP server.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "ServerName": { "type": "STRING" }
+      }
+    }
+  },
+  {
+    "name": "read_resource",
+    "description": "Read a resource content.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "ServerName": { "type": "STRING" },
+        "Uri": { "type": "STRING" }
+      }
+    }
+  },
+  {
+    "name": "read_terminal",
+    "description": "Read the contents of a terminal.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "Name": { "type": "STRING" },
+        "ProcessID": { "type": "STRING" }
+      },
+      "required": ["ProcessID", "Name"]
+    }
+  },
+  {
+    "name": "read_url_content",
+    "description": "Fetch content from a URL via HTTP request.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "Url": { "type": "STRING" }
+      },
+      "required": ["Url"]
+    }
+  },
+  {
+    "name": "send_command_input",
+    "description": "Send input to a running command.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "CommandId": { "type": "STRING" },
+        "Input": { "type": "STRING" },
+        "Terminate": { "type": "BOOLEAN" },
+        "SafeToAutoRun": { "type": "BOOLEAN" },
+        "WaitMs": { "type": "INTEGER" }
+      },
+      "required": ["CommandId", "WaitMs", "SafeToAutoRun"]
+    }
+  },
+  {
+    "name": "view_content_chunk",
+    "description": "View a specific chunk of document content.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "document_id": { "type": "STRING" },
+        "position": { "type": "INTEGER" }
+      },
+      "required": ["document_id", "position"]
+    }
+  }
+]
