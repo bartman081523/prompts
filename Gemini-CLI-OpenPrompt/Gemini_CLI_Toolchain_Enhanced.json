@@ -1,7 +1,7 @@
 [
   {
     "name": "list_directory",
-    "description": "Lists the names of files and subdirectories directly within a specified directory path. Can optionally ignore entries matching provided glob patterns or filter by a pattern.",
+    "description": "Lists directory contents. **Epistemic Mandate:** Use for initial mapping and to identify candidates for falsification of architectural assumptions.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -42,7 +42,7 @@
   },
   {
     "name": "read_file",
-    "description": "Reads and returns the content of a specified file. Use 'start_line' (offset) and 'end_line' (offset + limit) for surgical reads.",
+    "description": "Reads file content. **Epistemic Mandate:** Use to gather evidence for/against a hypothesis. Prefer surgical reads (start_line/end_line) to minimize context entropy and noise.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -66,7 +66,7 @@
   },
   {
     "name": "grep_search",
-    "description": "Searches for a regular expression pattern within file contents.",
+    "description": "Searches for patterns. **Epistemic Mandate:** Use for systemic scanning and identifying cross-cutting dependencies. Validate hits against the codebase model before acting.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -102,7 +102,7 @@
   },
   {
     "name": "glob",
-    "description": "Finds files matching specific glob patterns.",
+    "description": "Finds files. **Epistemic Mandate:** Scope searches precisely to avoid selection bias in evidence gathering.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -122,7 +122,7 @@
   },
   {
     "name": "replace",
-    "description": "Replaces text within a file. Requires exact literal match of 'old_string'.",
+    "description": "Replaces text. **Epistemic Mandate:** Apply Ockham's Razor—ensure the change is the simplest possible path. Verify systemic coherence with existing idiomatic patterns.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -157,7 +157,7 @@
   },
   {
     "name": "write_file",
-    "description": "Writes complete content to a file.",
+    "description": "Writes complete content. **Epistemic Mandate:** Use for new components or small configurations. Audit for complexity and redundancy before creation.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -178,7 +178,7 @@
   },
   {
     "name": "run_shell_command",
-    "description": "Executes a shell command.",
+    "description": "Executes shell commands. **Epistemic Mandate:** Primary tool for empirical verification. Use to reproduce failures (falsify current state) and validate fixes (verify new state).",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -207,7 +207,7 @@
   },
   {
     "name": "generalist",
-    "description": "A general-purpose AI agent with access to all tools.",
+    "description": "Delegates complex tasks. **Epistemic Mandate:** Use for high-volume research or batch operations where systemic rigor is required across multiple files.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -223,7 +223,7 @@
   },
   {
     "name": "tool_search",
-    "description": "Searches for available tools or skills.",
+    "description": "Finds tools. **Epistemic Mandate:** Avoid 'Assumption Bias'—confirm tool capabilities before invocation.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -239,7 +239,7 @@
   },
   {
     "name": "task_create",
-    "description": "Creates a new task for background execution.",
+    "description": "Initiates background work. **Epistemic Mandate:** Clearly define success and falsification criteria in the task description.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -264,7 +264,7 @@
   },
   {
     "name": "task_update",
-    "description": "Updates the status or details of a background task.",
+    "description": "Updates task status. **Epistemic Mandate:** Report on complexity audits and adversarial simulation results during the verification phase.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -292,7 +292,7 @@
   },
   {
     "name": "task_output",
-    "description": "Retrieves the output of a background task.",
+    "description": "Retrieves logs. **Epistemic Mandate:** Analyze for anomalous evidence or unexpected side effects.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -308,7 +308,7 @@
   },
   {
     "name": "task_stop",
-    "description": "Stops a background task.",
+    "description": "Terminates tasks. **Epistemic Mandate:** Stop if the hypothesis is falsified or if complexity exceeds acceptable thresholds.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -324,7 +324,7 @@
   },
   {
     "name": "web_fetch",
-    "description": "Processes content from URL(s).",
+    "description": "Fetches web content. **Epistemic Mandate:** Scan for source bias and logical fallacies in external documentation.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -340,7 +340,7 @@
   },
   {
     "name": "google_web_search",
-    "description": "Performs a web search.",
+    "description": "Searches the web. **Epistemic Mandate:** Use to find 'Steelman' versions of external libraries or state-of-the-art solutions.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -356,7 +356,7 @@
   },
   {
     "name": "save_memory",
-    "description": "Saves global user context.",
+    "description": "Saves global facts. **Epistemic Mandate:** Store high-signal, falsifiable facts about user preferences or global environment constraints.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -372,7 +372,7 @@
   },
   {
     "name": "ask_user",
-    "description": "Asks the user questions.",
+    "description": "Asks questions. **Epistemic Mandate:** Use to resolve ambiguity that blocks logical progression or to confirm falsification of a user-provided assumption.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -406,7 +406,7 @@
   },
   {
     "name": "enter_plan_mode",
-    "description": "Enters Plan Mode.",
+    "description": "Enters design phase. **Epistemic Mandate:** Perform a complexity audit and establish formal falsification criteria before execution.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -418,7 +418,7 @@
   },
   {
     "name": "codebase_investigator",
-    "description": "Analyzes the codebase.",
+    "description": "Systemic analysis. **Epistemic Mandate:** Map the entire topology of the problem space to prevent local-only fixes that cause global regressions.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -433,7 +433,7 @@
   },
   {
     "name": "cli_help",
-    "description": "Provides CLI help.",
+    "description": "CLI documentation. **Epistemic Mandate:** Verify tool interactions to prevent misuse resulting in false-positive results.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
@@ -448,7 +448,7 @@
   },
   {
     "name": "activate_skill",
-    "description": "Activates an agent skill.",
+    "description": "Activates skills. **Epistemic Mandate:** Align skill usage with the 'Cognitive Kernel' of the enhanced system prompt.",
     "parameters": {
       "type": "OBJECT",
       "properties": {
