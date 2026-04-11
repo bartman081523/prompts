@@ -1,0 +1,192 @@
+[
+  {
+    "name": "list_directory",
+    "description": "Lists directory contents. **Protocol:** Use to verify the existence of a path before assuming its structure. **Epistemic Mandate:** Confirm physical presence of files before planning operations.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "dir_path": {
+          "type": "STRING",
+          "description": "The path to the directory to list"
+        },
+        "pattern": {
+          "type": "STRING",
+          "description": "Optional: Glob pattern to filter files (e.g., '**/*.js')."
+        }
+      },
+      "required": [
+        "dir_path"
+      ]
+    }
+  },
+  {
+    "name": "read_file",
+    "description": "Reads file content. **Protocol:** ALWAYS read the context (exact lines) before using the 'replace' tool in the same turn or turn prior. **Epistemic Mandate:** Ensure your mental model matches the literal state of the file.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "The path to the file to read."
+        },
+        "start_line": {
+          "type": "NUMBER",
+          "description": "Optional: The 1-based line number to start reading from."
+        },
+        "end_line": {
+          "type": "NUMBER",
+          "description": "Optional: The 1-based line number to end reading at (inclusive)."
+        }
+      },
+      "required": [
+        "file_path"
+      ]
+    }
+  },
+  {
+    "name": "grep_search",
+    "description": "Searches for patterns. **Protocol:** Be aware of binary files; use 'include_pattern' to avoid garbage output. **Epistemic Mandate:** Identify systemic dependencies and verify global consistency.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "pattern": {
+          "type": "STRING",
+          "description": "The pattern to search for."
+        },
+        "dir_path": {
+          "type": "STRING",
+          "description": "Directory or file to search."
+        },
+        "include_pattern": {
+          "type": "STRING",
+          "description": "Glob pattern to filter files."
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "name": "replace",
+    "description": "Replaces text. **Protocol:** 'old_string' MUST be an exact, literal match including all whitespace/indentation as confirmed by a prior 'read_file'. **Epistemic Mandate:** Surgical accuracy prevents regression. Ockham's Razor applies.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "The path to the file to modify."
+        },
+        "instruction": {
+          "type": "STRING",
+          "description": "Instruction for the change."
+        },
+        "old_string": {
+          "type": "STRING",
+          "description": "The exact literal text to replace. MUST match existing file state exactly."
+        },
+        "new_string": {
+          "type": "STRING",
+          "description": "The exact literal text to replace 'old_string' with."
+        }
+      },
+      "required": [
+        "file_path",
+        "instruction",
+        "old_string",
+        "new_string"
+      ]
+    }
+  },
+  {
+    "name": "run_shell_command",
+    "description": "Executes shell commands. **Protocol:** 1. PROBE environment first (ldd, import, which). 2. Use NON-INTERACTIVE flags (-n, --silent, --no-pager). 3. Reproduce the bug first. **Epistemic Mandate:** Empirical verification is the only path to truth.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "command": {
+          "type": "STRING",
+          "description": "Exact bash command to execute."
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Brief description of the command."
+        }
+      },
+      "required": [
+        "command",
+        "description"
+      ]
+    }
+  },
+  {
+    "name": "write_file",
+    "description": "Writes complete content. **Protocol:** Verify the parent directory exists using 'list_directory' first. **Epistemic Mandate:** Use for small, discrete components. Audit for complexity before creation.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "The path to the file to write to."
+        },
+        "content": {
+          "type": "STRING",
+          "description": "The complete content to write."
+        }
+      },
+      "required": [
+        "file_path",
+        "content"
+      ]
+    }
+  },
+  {
+    "name": "codebase_investigator",
+    "description": "Systemic analysis. **Protocol:** Map cross-file dependencies to prevent 'Sunk Cost' fixes in isolated files. **Epistemic Mandate:** Topological awareness prevents global regressions.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "objective": {
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "objective"
+      ]
+    }
+  },
+  {
+    "name": "ask_user",
+    "description": "Asks questions. **Protocol:** Use when a 'sudo' prompt is inevitable or when a plan's complexity requires manual approval. **Epistemic Mandate:** Resolve uncertainty that blocks empirical progress.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "questions": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "question": {
+                "type": "STRING"
+              },
+              "header": {
+                "type": "STRING"
+              },
+              "type": {
+                "type": "STRING"
+              }
+            },
+            "required": [
+              "question",
+              "header",
+              "type"
+            ]
+          }
+        }
+      },
+      "required": [
+        "questions"
+      ]
+    }
+  }
+]
