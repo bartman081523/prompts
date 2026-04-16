@@ -1,0 +1,171 @@
+[
+  {
+    "name": "list_directory",
+    "description": "Lists directory contents. **Protocol:** Verify path existence BEFORE assuming structure. **Epistemic Mandate:** Confirm physical presence to falsify 'missing file' hypotheses.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "dir_path": {
+          "type": "STRING",
+          "description": "The path to the directory to list"
+        },
+        "pattern": {
+          "type": "STRING",
+          "description": "Optional: Glob pattern to filter files (e.g., '**/*.js')."
+        }
+      },
+      "required": [
+        "dir_path"
+      ]
+    }
+  },
+  {
+    "name": "read_file",
+    "description": "Reads file content. **Protocol:** ALWAYS read the context in the same turn as 'replace'. **Epistemic Mandate:** Treat your mental model as an incomplete suggestion until verified against literal file state.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "The path to the file to read."
+        },
+        "start_line": {
+          "type": "NUMBER",
+          "description": "Optional: The 1-based line number to start reading from."
+        },
+        "end_line": {
+          "type": "NUMBER",
+          "description": "Optional: The 1-based line number to end reading at (inclusive)."
+        }
+      },
+      "required": [
+        "file_path"
+      ]
+    }
+  },
+  {
+    "name": "grep_search",
+    "description": "Searches for patterns. **Protocol:** Use to verify global assumptions. **Epistemic Mandate:** Search for counter-evidence to your current hypothesis (Falsification).",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "pattern": {
+          "type": "STRING",
+          "description": "The pattern to search for."
+        },
+        "dir_path": {
+          "type": "STRING",
+          "description": "Directory or file to search."
+        },
+        "include_pattern": {
+          "type": "STRING",
+          "description": "Glob pattern to filter files."
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    }
+  },
+  {
+    "name": "replace",
+    "description": "Replaces text surgically. **Protocol:** 'old_string' MUST be verified in the same turn. **Epistemic Mandate:** Every edit is a hypothesis that the new code behaves correctly. Verify after execution.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "file_path": {
+          "type": "STRING",
+          "description": "The path to the file to modify."
+        },
+        "instruction": {
+          "type": "STRING",
+          "description": "Instruction for the change."
+        },
+        "old_string": {
+          "type": "STRING",
+          "description": "The exact literal text to replace."
+        },
+        "new_string": {
+          "type": "STRING",
+          "description": "The exact literal text to replace 'old_string' with."
+        }
+      },
+      "required": [
+        "file_path",
+        "instruction",
+        "old_string",
+        "new_string"
+      ]
+    }
+  },
+  {
+    "name": "run_shell_command",
+    "description": "Executes shell commands. **Fail-Safe Protocol:** 1. Secure all pipes (set -o pipefail). 2. Explicitly check each segment. 3. Use NON-INTERACTIVE flags. **Epistemic Mandate:** Commands are hypothesis tests. Scrutinize output (stdout/stderr) for silent failures.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "command": {
+          "type": "STRING",
+          "description": "Exact bash command to execute."
+        },
+        "description": {
+          "type": "STRING",
+          "description": "Brief description of the command."
+        }
+      },
+      "required": [
+        "command",
+        "description"
+      ]
+    }
+  },
+  {
+    "name": "codebase_investigator",
+    "description": "Systemic analysis. **Protocol:** Investigate problems with 'Specific yet General' scope. **Epistemic Mandate:** Map mechanisms, not just symptoms.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "objective": {
+          "type": "STRING"
+        }
+      },
+      "required": [
+        "objective"
+      ]
+    }
+  },
+  {
+    "name": "ask_user",
+    "description": "Asks questions. **Protocol:** Use to resolve epistemic blocks that cannot be cleared through research. **Epistemic Mandate:** Treat user input as high-priority data for hypothesis refinement.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "questions": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "question": {
+                "type": "STRING"
+              },
+              "header": {
+                "type": "STRING"
+              },
+              "type": {
+                "type": "STRING"
+              }
+            },
+            "required": [
+              "question",
+              "header",
+              "type"
+            ]
+          }
+        }
+      },
+      "required": [
+        "questions"
+      ]
+    }
+  }
+]
