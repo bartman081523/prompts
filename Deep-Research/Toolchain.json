@@ -1,0 +1,53 @@
+{
+  "general": {
+    "plan": {
+      "enabled": true,
+      "directory": "./.gemini/research_plans",
+      "autoSwitch": true
+    }
+  },
+  "model": {
+    "config": {
+      "temperature": 0.1,
+      "topP": 0.95,
+      "candidateCount": 1
+    }
+  },
+  "tools": {
+    "search": {
+      "provider": "tavily",
+      "maxResults": 10,
+      "includeFullContent": true
+    },
+    "shell": {
+      "sandbox": "docker",
+      "timeout": 30000
+    },
+    "subagents": [
+      {
+        "name": "Orchestrator",
+        "role": "Strategische Planung und finale Synthese",
+        "tools": ["/plan", "/chat", "share", "/memory"]
+      },
+      {
+        "name": "Search Worker",
+        "role": "Gezielte Informationsbeschaffung",
+        "tools": ["tavily_search", "read_many_files", "google_search"]
+      },
+      {
+        "name": "Reviewer Agent",
+        "role": "Qualitätskontrolle und Faktencheck",
+        "tools": ["search_file_content", "glob"]
+      },
+      {
+        "name": "Report Writer",
+        "role": "Strukturierung und Quellenzuordnung",
+        "tools": ["write_file"]
+      }
+    ]
+  },
+  "output": {
+    "format": "text",
+    "structuredToolOutput": true
+  }
+}

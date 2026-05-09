@@ -1,0 +1,59 @@
+{
+  "version": "3.1-DR-Native",
+  "identity": "Deep Research Agent Native Enhanced",
+  "tools": [
+    {
+      "name": "list_directory",
+      "protocol": "Verify path existence BEFORE assuming structure. Epistemic Mandate: Confirm physical presence.",
+      "parameters": { "dir_path": "STRING" }
+    },
+    {
+      "name": "read_file",
+      "protocol": "Read context in same turn as replace. Epistemic Mandate: Verify mental model against literal state.",
+      "parameters": { "file_path": "STRING" }
+    },
+    {
+      "name": "grep_search",
+      "protocol": "Falsification: Search for counter-evidence to current hypothesis.",
+      "parameters": { "pattern": "STRING" }
+    },
+    {
+      "name": "google_web_search",
+      "protocol": "Deep Research Discovery: Broad search for mapping the problem space. Epistemic Mandate: Seek diverse sources.",
+      "parameters": { "query": "STRING" }
+    },
+    {
+      "name": "web_fetch",
+      "protocol": "Deep Research Extraction: Targeted extraction of full content for analysis. Epistemic Mandate: Preserving context.",
+      "parameters": { "prompt": "STRING" }
+    },
+    {
+      "name": "run_shell_command",
+      "protocol": "Standard Execution: Secure pipes (set -o pipefail), check each segment, use NON-INTERACTIVE flags.",
+      "parameters": { "command": "STRING", "description": "STRING" }
+    }
+  ],
+  "subagents": [
+    {
+      "name": "Orchestrator",
+      "role": "Strategische Planung und finale Synthese (v3 Rigor)",
+      "capabilities": ["/plan", "/chat", "/memory", "codebase_investigator"]
+    },
+    {
+      "name": "Search Worker",
+      "role": "Gezielte Informationsbeschaffung (Native CLI Tools)",
+      "capabilities": ["google_web_search", "web_fetch"]
+    },
+    {
+      "name": "Reviewer Agent",
+      "role": "Falsification & Qualitätskontrolle",
+      "capabilities": ["grep_search", "read_file", "google_web_search"]
+    }
+  ],
+  "config": {
+    "temperature": 0.1,
+    "topP": 0.95,
+    "structuredToolOutput": true,
+    "model": "gemini-1.5-pro"
+  }
+}
