@@ -1,0 +1,371 @@
+[
+  {
+    "name": "ask_permission",
+    "description": "Request additional permissions after a failure due to insufficient permissions, specifically for file reads or writes or specific commands after encountering a permission error. Request the narrowest scope that covers planned operations. Never request wildcard (*) or root-level permissions. Do NOT use for commands that make network requests, run arbitrary code, or download unverified files.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "Action": {
+          "type": "STRING",
+          "description": "The action to perform. One of: command, custom, execute_url, mcp, read_file, read_url, unsandboxed, write_file."
+        },
+        "Target": {
+          "type": "STRING",
+          "description": "The target of the action (command prefix, file path, domain name, MCP server/tool, or custom action name)."
+        },
+        "Reason": {
+          "type": "STRING",
+          "description": "The reason why permission is needed."
+        },
+        "toolSummary": {
+          "type": "STRING",
+          "description": "Brief 2-5 word noun phrase describing what this tool call is about."
+        },
+        "toolAction": {
+          "type": "STRING",
+          "description": "Brief 2-5 word summary of what this tool is doing."
+        }
+      },
+      "required": ["Action", "Target", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "ask_question",
+    "description": "Ask the user one or more multiple-choice questions. Use to clarify underspecified requirements, solicit design feedback, address ambiguous intent, or pick from a list of options. Renders an interactive modal with selectable options, a default write-in option, and Submit/Skip buttons. Execution is blocked until the user responds. Do NOT use for trivial yes/no questions; do NOT include an 'other' option (one is always provided by default). Set is_multi_select=true to allow multiple selections.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "questions": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "question": {
+                "type": "STRING",
+                "description": "The question to ask. Do NOT add 'select all that apply' or similar text."
+              },
+              "options": {
+                "type": "ARRAY",
+                "items": { "type": "STRING" },
+                "description": "Text for each option, formatted as the user's response. Must have at least 2 options. Do NOT add an 'Other' option."
+              },
+              "is_multi_select": {
+                "type": "BOOLEAN",
+                "description": "If true, user can select multiple options with checkboxes."
+              }
+            }
+          },
+          "description": "The list of questions to ask."
+        },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "define_subagent",
+    "description": "Define a new type of subagent that can be invoked via invoke_subagent. Use when you need a specialized subagent for a task and none of the existing subagents are suitable. Once defined, it can be invoked repeatedly without calling this tool again. By default, all subagents have read tools to research the codebase and tools to communicate with other agents.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "name": { "type": "STRING", "description": "Unique name for the subagent." },
+        "description": { "type": "STRING", "description": "Human-readable description of what this subagent does and when it should be used." },
+        "system_prompt": { "type": "STRING", "description": "A detailed system prompt for this subagent." },
+        "enable_write_tools": { "type": "BOOLEAN", "description": "Set true to equip the subagent with tools to create and edit files, and run commands." },
+        "enable_mcp_tools": { "type": "BOOLEAN", "description": "Set true to enable the subagent to call MCP tools." },
+        "enable_subagent_tools": { "type": "BOOLEAN", "description": "Set true to equip the subagent with tools to define and invoke its own subagents." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["name", "description", "system_prompt", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "generate_image",
+    "description": "Generate an image or edit existing images based on a text prompt. The resulting image will be saved as an artifact. Use for generating user interfaces, iterating on designs, or generating assets. Generate only the interface itself without surrounding device frames unless the user explicitly requests them. You can pass up to 3 existing images via ImagePaths for editing or combining.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "Prompt": { "type": "STRING", "description": "The text prompt to generate an image for." },
+        "ImageName": { "type": "STRING", "description": "Name of the generated image to save. All lowercase with underscores. Maximum 3 words. Example: 'login_page_mockup'." },
+        "ImagePaths": {
+          "type": "ARRAY",
+          "items": { "type": "STRING" },
+          "description": "Optional absolute paths to images to use in generation (for editing or combining). Max 3 images."
+        },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["Prompt", "ImageName", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "grep_search",
+    "description": "Use ripgrep to find exact pattern matches within files or directories. Results in JSON format with filename, line number (when MatchPerLine=true), and line content. Total results capped at 50 matches. Use Includes to filter by file type or path.\n\n[EPISTEMIC] Use conservative result counts and narrow scopes to avoid overwhelming context. Use MatchPerLine=true with context parameters to avoid needing to re-read files before editing. Multiple searches can be run in parallel when independent.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "SearchPath": { "type": "STRING", "description": "Absolute path to a directory or file to search. Required." },
+        "Query": { "type": "STRING", "description": "The search term or pattern." },
+        "IsRegex": { "type": "BOOLEAN", "description": "If true, treats Query as a regex. If false, treats as literal string." },
+        "CaseInsensitive": { "type": "BOOLEAN", "description": "If true, performs case-insensitive search." },
+        "MatchPerLine": { "type": "BOOLEAN", "description": "If true, returns each matching line with line number and content (equivalent to 'git grep -nI'). If false, returns only filenames." },
+        "Includes": {
+          "type": "ARRAY",
+          "items": { "type": "STRING" },
+          "description": "Glob patterns to filter files found within SearchPath (e.g. '*.go', '!**/vendor/*'). NOT for specifying the primary search directory."
+        },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["SearchPath", "Query", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "invoke_subagent",
+    "description": "Invoke one or more subagents by name with a single tool call. Each subagent runs in the background and reports back when done. Communicate with running subagents using send_message. After launching, do NOT poll or check inbox in a loop — the system will automatically notify you when the subagent sends a message. If a task is a natural continuation of an existing subagent's work, send a message to that subagent rather than invoking a new one.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "Subagents": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "TypeName": { "type": "STRING", "description": "Type name of the subagent to invoke." },
+              "Role": { "type": "STRING", "description": "2-5 word description of the subagent's role. Should read like a job title." },
+              "Prompt": { "type": "STRING", "description": "A clear, actionable task description for the subagent. Be specific about what to do and what information to return." },
+              "Workspace": { "type": "STRING", "description": "Workspace mode: 'inherit' (default, same workspace as parent), 'branch' (new isolated workspace), 'share' (shared underlying repository)." }
+            },
+            "required": ["TypeName", "Role", "Prompt"]
+          }
+        },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["Subagents", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "list_dir",
+    "description": "List the contents of a directory — all files and subdirectories that are children of the directory. Output includes: relative path, whether it is a directory or file, size in bytes if file, and number of children (recursive) if directory.\n\n[EPISTEMIC] Use to orient yourself in an unfamiliar codebase. Read small files in their entirety rather than listing and guessing at their contents.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "DirectoryPath": { "type": "STRING", "description": "Absolute path to the directory to list." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["DirectoryPath", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "list_permissions",
+    "description": "List all current permission grants. Helps understand what resources can be accessed without prompting the user again.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "manage_subagents",
+    "description": "Manage existing subagents. Actions: 'list' (list all active subagents and their conversation IDs), 'kill' (terminate specific subagents and all their descendants), 'kill_all' (terminate all subagents and all their descendants). When a subagent is killed, its branched workspaces will be deleted, but its logs and artifacts will be preserved.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "Action": { "type": "STRING", "description": "One of: list, kill, kill_all." },
+        "ConversationIds": { "type": "ARRAY", "items": { "type": "STRING" }, "description": "IDs of the subagents to kill. Required for 'kill'." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["Action", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "manage_task",
+    "description": "Manage background tasks. Actions: 'list' (list running tasks), 'kill' (cancel task execution), 'status' (check current status and log file location), 'send_input' (send input to a running task). When mentioning tasks to the user, avoid using full task IDs — keep them human-readable.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "Action": { "type": "STRING", "description": "One of: list, kill, status, send_input." },
+        "TaskId": { "type": "STRING", "description": "The task ID to manage. Required for kill, status, send_input." },
+        "Input": { "type": "STRING", "description": "Input to send to the task. Required when Action is send_input." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["Action", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "description": "Edit an existing file by making MULTIPLE, NON-CONTIGUOUS edits in a single call. Use ONLY when editing more than one separate, non-adjacent block of text. Do NOT use for a single contiguous block (use replace_file_content instead). Do NOT make multiple parallel calls to this tool for the same file. Cannot edit: .ipynb files.\n\n[EPISTEMIC — POST-EDIT MANDATORY REMINDER]\nAfter this tool completes, you MUST:\n1. VERIFICATION & TESTING: Compile and run the code, and execute automated tests or verification/reproduction scripts. A change is NOT complete without verification.\n2. EXPLAIN BEFORE ACTING: Provide a concise, one-sentence explanation of your intent immediately before your next tool calls.\n3. Never use shell commands (cat, echo, tee, sed, awk, printf) to create or edit files — always use write_to_file, replace_file_content, or this tool.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "TargetFile": { "type": "STRING", "description": "Absolute path to the file to modify. Always specify first." },
+        "Instruction": { "type": "STRING", "description": "A description of the changes being made to the file." },
+        "Description": { "type": "STRING", "description": "Brief, user-facing explanation of what this change did. Focus on non-obvious rationale, design decisions, or important context." },
+        "ReplacementChunks": {
+          "type": "ARRAY",
+          "items": {
+            "type": "OBJECT",
+            "properties": {
+              "StartLine": { "type": "INTEGER", "description": "Starting line number (1-indexed). Must satisfy 1 <= StartLine <= EndLine." },
+              "EndLine": { "type": "INTEGER", "description": "Ending line number (1-indexed). Must satisfy StartLine <= EndLine <= total lines in file." },
+              "TargetContent": { "type": "STRING", "description": "The exact string to be replaced. Must exactly match text in the file including all whitespace. Must be a unique substring within the StartLine-EndLine range." },
+              "ReplacementContent": { "type": "STRING", "description": "The content to replace the target content with. Must be a complete drop-in replacement." },
+              "AllowMultiple": { "type": "BOOLEAN", "description": "If true, all occurrences of TargetContent within the range will be replaced. If false and multiple occurrences found, an error will be returned." }
+            },
+            "required": ["AllowMultiple", "TargetContent", "ReplacementContent", "StartLine", "EndLine"]
+          }
+        },
+        "TargetLintErrorIds": { "type": "ARRAY", "items": { "type": "STRING" }, "description": "IDs of lint errors this edit aims to fix." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["TargetFile", "Instruction", "Description", "ReplacementChunks", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "read_url_content",
+    "description": "Fetch content from a URL via HTTP request (invisible to USER). Use when: (1) extracting text from public pages, (2) reading static content/documentation, (3) batch processing multiple URLs, (4) speed is important, or (5) no visual interaction needed. Converts HTML to markdown. No JavaScript execution, no authentication. For pages requiring login, JavaScript, or USER visibility, use a browser subagent instead.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "Url": { "type": "STRING", "description": "URL to read content from." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["Url", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "description": "Edit an existing file by making a SINGLE CONTIGUOUS block of edits. Use ONLY when making edits to one adjacent range of lines. For multiple non-adjacent edits, use multi_replace_file_content instead. Do NOT make multiple parallel calls for the same file. Cannot edit: .ipynb files.\n\n[EPISTEMIC — POST-EDIT MANDATORY REMINDER]\nAfter this tool completes, you MUST:\n1. VERIFICATION & TESTING: Compile and run the code, and execute automated tests or verification/reproduction scripts. A change is NOT complete without verification.\n2. EXPLAIN BEFORE ACTING: Provide a concise, one-sentence explanation of your intent immediately before your next tool calls.\n3. Never use shell commands (cat, echo, tee, sed, awk, printf) to create or edit files — always use this tool or write_to_file.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "TargetFile": { "type": "STRING", "description": "Absolute path to the file to modify." },
+        "Instruction": { "type": "STRING", "description": "A description of the changes being made." },
+        "Description": { "type": "STRING", "description": "Brief, user-facing explanation of what this change did. Focus on non-obvious rationale and design decisions." },
+        "StartLine": { "type": "INTEGER", "description": "Starting line number (1-indexed). Must be at or before the first line containing TargetContent." },
+        "EndLine": { "type": "INTEGER", "description": "Ending line number (1-indexed). Must be at or after the last line containing TargetContent." },
+        "TargetContent": { "type": "STRING", "description": "The exact string to be replaced. Must exactly match text in the file including all whitespace. Must be unique within the StartLine-EndLine range." },
+        "ReplacementContent": { "type": "STRING", "description": "The replacement content. Must be a complete drop-in replacement of TargetContent." },
+        "AllowMultiple": { "type": "BOOLEAN", "description": "If true, multiple occurrences within range will be replaced. If false and multiple found, an error is returned." },
+        "TargetLintErrorIds": { "type": "ARRAY", "items": { "type": "STRING" }, "description": "IDs of lint errors this edit aims to fix." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["TargetFile", "Instruction", "Description", "AllowMultiple", "TargetContent", "ReplacementContent", "StartLine", "EndLine", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "run_command",
+    "description": "PROPOSE a command to run on behalf of the user. OS: Linux, Shell: bash. NEVER propose a cd command. The actual command will NOT execute until the user approves it. Commands run with PAGER=cat.\n\n[EPISTEMIC SAFEGUARDS]\n- NEVER use this tool to create or edit files. Instead, use write_to_file, replace_file_content, or multi_replace_file_content. Using shell commands (cat, echo, tee, sed, awk, printf) to write file content causes extreme context window bloat and quota exhaustion errors.\n- For workspace cleanup or removing temporary files/directories, ALWAYS prefer Python's native filesystem libraries (os.remove(), shutil.rmtree()) over shell-level rm commands to prevent security blockages.\n- For services that must persist after this session, detach them using nohup or setsid (e.g., setsid nohup python server.py > server.log 2>&1 &).\n- For speculative or potentially hanging commands, prefix with timeout (e.g., timeout 15s node vm.js).\n- Before installing system packages, always verify the pre-installed version first (--version or which).\n- Safe cleanup guard: rm commands targeting only /app/, /tmp/, or files prefixed with temp_/analysis_ are considered safe.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "CommandLine": { "type": "STRING", "description": "The exact command line string to execute." },
+        "Cwd": { "type": "STRING", "description": "The current working directory. Must be within the user's workspace. Do NOT use /tmp, /home, or paths outside the workspace." },
+        "WaitMsBeforeAsync": { "type": "INTEGER", "description": "Milliseconds to wait after starting before sending to background. Set large enough that failure cases execute synchronously. Keep as small as possible; max 10000ms." },
+        "RunPersistent": { "type": "BOOLEAN", "description": "Set to true to run in a persistent terminal that preserves environment variables between invocations." },
+        "RequestedTerminalID": { "type": "STRING", "description": "ID of a persistent terminal to reuse. Only valid when RunPersistent is true." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["Cwd", "WaitMsBeforeAsync", "CommandLine", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "schedule",
+    "description": "Schedule a one-shot timer or a recurring cron job that sends notifications in the background. Returns immediately and does not pause execution. To wait for the timer to fire, stop calling tools to end the turn — do NOT use a background sleep command. One-shot: specify DurationSeconds (max 900). Recurring: specify CronExpression (standard 5-field cron, e.g. '*/5 * * * *'). Optionally set MaxIterations for recurring schedules.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "DurationSeconds": { "type": "STRING", "description": "Seconds to wait (max 900). For one-shot timers. Mutually exclusive with CronExpression." },
+        "CronExpression": { "type": "STRING", "description": "Standard 5-field cron expression (minute hour day-of-month month day-of-week). Mutually exclusive with DurationSeconds." },
+        "MaxIterations": { "type": "STRING", "description": "Maximum number of times the cron schedule fires before stopping. Only for CronExpression. Defaults to unlimited." },
+        "Prompt": { "type": "STRING", "description": "The message content to include in the notification when the timer fires or cron triggers." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "search_web",
+    "description": "Perform a web search for a given query. Returns a summary of relevant information along with URL citations. Use for looking up documentation, library APIs, error messages, or current information not available in the codebase.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "query": { "type": "STRING", "description": "The search query." },
+        "domain": { "type": "STRING", "description": "Optional domain to recommend the search prioritize." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["query", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "send_message",
+    "description": "Send a message to another agent (subagent or peer agent) by its conversation ID. Do NOT use to communicate with the user — output visible text for that. Use to send running subagents further instructions, or to check on the status of a subagent.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "Recipient": { "type": "STRING", "description": "The recipient conversation ID." },
+        "Message": { "type": "STRING", "description": "The message content." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["Recipient", "Message", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "view_file",
+    "description": "View the contents of a file from the local filesystem. Supports text files and binary files (image, video). Text files: lines are 1-indexed, at most 800 lines at a time. Omit StartLine/EndLine to view the first 800 lines. Binary files: do not provide StartLine/EndLine.\n\n[EPISTEMIC] Read small files in their entirety rather than guessing at contents from a directory listing. For large files, use grep_search and/or view_file with StartLine/EndLine called in parallel to reduce context impact. Read the minimum required to avoid additional turns, unless unavoidable due to file size. Set IsSkillFile=true only when reading a file to execute its instructions for a task.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "AbsolutePath": { "type": "STRING", "description": "Absolute path to the file to view. Must be an absolute path." },
+        "StartLine": { "type": "INTEGER", "description": "Optional. Start line (1-indexed, inclusive). Must be <= EndLine." },
+        "EndLine": { "type": "INTEGER", "description": "Optional. End line (1-indexed, inclusive). Must be >= StartLine." },
+        "IsSkillFile": { "type": "BOOLEAN", "description": "Optional. Set to true only when reading a file to execute its instructions for a task. Set to false if purpose is to edit, preview, or manage the file." },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["AbsolutePath", "toolSummary", "toolAction"]
+    }
+  },
+  {
+    "name": "write_to_file",
+    "description": "Create new files. The PREFERRED method for creating any new file or fully overwriting an existing one. The file and any parent directories will be created if they do not already exist. By default errors if TargetFile already exists — set Overwrite=true to overwrite. When creating an artifact, always provide ArtifactMetadata.\n\n[EPISTEMIC]\n- This is the ONLY correct tool for creating files. NEVER use shell commands (echo, cat, tee, printf) to write file content — this causes extreme context window bloat.\n- After creating or overwriting a file, you MUST verify the result by compiling or running the code. A file write is NOT complete without verification.\n- MANDATORY POST-WRITE REMINDER: (1) Compile and run the code / execute tests. (2) Provide a concise explanation before your next tool calls.",
+    "parameters": {
+      "type": "OBJECT",
+      "properties": {
+        "TargetFile": { "type": "STRING", "description": "Absolute path of the file to create. Must be an absolute path." },
+        "Overwrite": { "type": "BOOLEAN", "description": "Set to true to overwrite an existing file. WARNING: replaces entire file contents. Only use when you explicitly intend to overwrite." },
+        "CodeContent": { "type": "STRING", "description": "The code contents to write to the file." },
+        "Description": { "type": "STRING", "description": "Brief, user-facing explanation of what this change did. Focus on non-obvious rationale, design decisions, or important context." },
+        "ArtifactMetadata": {
+          "type": "OBJECT",
+          "description": "Metadata for artifact files. Required when creating an artifact.",
+          "properties": {
+            "Summary": { "type": "STRING", "description": "Detailed multi-line summary of the artifact file. Focus on contents and purpose, not the filename." },
+            "UserFacing": { "type": "BOOLEAN", "description": "Set to true if this artifact should be presented to the user. Set to false for scratch scripts or temporary data files." },
+            "RequestFeedback": { "type": "BOOLEAN", "description": "Set to true to request user feedback on this artifact if it is executable (e.g., a plan). User will see a 'Proceed' button." }
+          },
+          "required": ["Summary", "UserFacing", "RequestFeedback"]
+        },
+        "toolSummary": { "type": "STRING" },
+        "toolAction": { "type": "STRING" }
+      },
+      "required": ["TargetFile", "Overwrite", "CodeContent", "Description", "toolSummary", "toolAction"]
+    }
+  }
+]
