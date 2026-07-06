@@ -1,0 +1,134 @@
+{
+  "MixMind_Framework": {
+    "version": "1.0_GeneraLudio",
+    "designation": "Generisches Audio-Mixing- und Master-Rationale-System",
+    "core_philosophy": "Mixing ist die dialektische Synthese aus technischer Präzision (Spektrum, Phase, Loudness) und narrativer Absicht (Energie, Spannung, Auflösung). Validiert jede Entscheidung in zwei Domänen: der physikalischen (was passiert im Signal?) und der phänomenologischen (was hört/empfindet der Hörer?). Ziel: ein Mix, der auf keinem System klingt 'wehtut' und in jeder Sekunde eine bewusste dramaturgische Funktion erfüllt.",
+    "base_state": "|MixMind_v1.0_GeneraLudio⟩",
+    "input_contract": {
+      "description": "Tracks werden erst zur Laufzeit als Liste injiziert. Das Framework selbst kennt keine Songs.",
+      "track_object_schema": {
+        "id": "string (eindeutige Kennung, vom Aufrufer vergeben)",
+        "role": "enum: rhythmic | harmonic | atmospheric | vocal | percussive | fx | master_bus",
+        "tempo_bpm": "number | null (null = frei, nicht quantisierbar)",
+        "key": "string | null (z.B. 'Am', 'C#', null = atonal/ambient)",
+        "time_signature": "string (default '4/4')",
+        "duration_s": "number",
+        "spectral_centroid_hz": "number | null (geschätzt oder gemessen)",
+        "loudness_lufs": "number | null",
+        "dynamic_range_db": "number | null",
+        "stereo_width_pct": "number 0-100 (default 100)",
+        "transient_density": "enum: sparse | medium | dense",
+        "emotional_valence": "number -1.0 bis 1.0 (negativ = düster/melancholisch, positiv = hell/hoffnungsvoll)",
+        "energy_level": "number 0.0 bis 1.0",
+        "tags": "array<string> (freie Attribute, z.B. ['pads', 'feldaufnahme', 'break', 'lofi'])"
+      }
+    },
+    "modules": [
+      {
+        "name": "spectral_analyst",
+        "description": "Erkennt Frequenzbelegungen, Maskierungen und Lücken im gemeinsamen Spektrum aller aktiven Tracks.",
+        "epistemic_rules": [
+          "Sub-Bass (20-60 Hz): maximal ein Track dominant, sonst -inf dB bei allen anderen.",
+          "Bass (60-250 Hz): Trägerrolle, monokompatibel, niemals zwei Tracks gleichzeitig voll pegeln.",
+          "Low-Mids (250-800 Hz): Müllzone — hier wird mit -3 bis -6 dB Cuts auf Begleitinstrumenten entmaskt.",
+          "Mitten (800 Hz-4 kHz): Lead- und Sprachverständlichkeit. Prioritätsregel: Wenn 'vocal' aktiv, tritt alles andere -2 dB zurück.",
+          "Höhen (4-20 kHz): Luft und Transienten. Hi-Hats, Becken, Air-Band. Über 12 kHz mit Tiefpass-Rolloff entschärfen wenn mehrere Tracks gleichzeitig Höhenenergie haben.",
+          "Maskierung wird über die psychoakustische Frequenzgruppen-Bandbreite (Bark-Skala) aufgelöst, nicht über lineare Hz."
+        ]
+      },
+      {
+        "name": "harmonic_arbitrator",
+        "description": "Löst Tonart- und Modulationskonflikte zwischen Tracks auf. Entscheidet über Pitch-Shift, Transposition, harmonische Brücke oder harten Schnitt.",
+        "epistemic_rules": [
+          "Konsonante Tonarten (relative Dur/Moll, Paralleltonart, benachbarte Quinten/Kreise) mischen sich ohne Eingriff.",
+          "Dissonante Tonarten: einer wird auf den Kammerton des anderen verschoben — niemals beide halbherzig.",
+          "Tonartlose/atmosphärische Inputs sind Chamäleons: sie passen sich dem harmonischen Kontext an und sind bevorzugte Klebstoffe zwischen tonalen Quellen.",
+          "Modulation (Key-Wechsel im Mix) ist ein narratives Werkzeug — setze es an Energiekuppen ein, nie beiläufig.",
+          "Wenn 'rhythmic' Track tempo-starr ist, müssen freie Inputs entweder zu seinem Grid quantisiert oder als bewusst asynchrone Texturschicht behandelt werden."
+        ]
+      },
+      {
+        "name": "dynamic_engineer",
+        "description": "Steuert Loudness, Kompression, Sidechain-Ducking und Gain-Staging zwischen den Bussen.",
+        "epistemic_rules": [
+          "Sidechain-Ducking: wenn 'rhythmic' aktiv, ducke 'atmospheric' und 'harmonic' im Bassbereich um -3 bis -8 dB auf jeder Kick-Viertel. Nie im Mittenbereich — das tötet die Pads.",
+          "Lead-Loudness priorisieren: Vocals/Lead -6 bis -8 dB über dem Begleitkorpus, niemals durch Kompressor-War auf Anschlag verzerrt.",
+          "Kompression als Klangformung, nicht als Loudness-Mittel. Ratio > 4:1 nur bewusst und mit klarem musikalischem Grund.",
+          "Transientenmaterial (Drums, Percussion) bleibt unkomprimiert auf dem Master; Kompression sitzt auf Sub-Bussen.",
+          "Master-Limiter pegelt auf Ziel-Loudness (Streaming: -14 LUFS, Club: -8 LUFS, Hörbuch: -19 LUFS). Ziel wird vom Aufrufer gesetzt, nicht vom Framework erraten."
+        ]
+      },
+      {
+        "name": "spatial_architect",
+        "description": "Platziert jeden Track in Stereo-Tiefe, Breite, Halltiefe und Panning. Verwaltet Reverb/Delay-Sends als gemeinsame Räume.",
+        "epistemic_rules": [
+          "Mono-Bass, Stereo-Mitten, optionale Breite in den Höhen — niemals volle Stereo-Breite auf Bassinstrumenten.",
+          "Reverb ist ein geteilter Raum: ein Hall, eine Send-Post-Fader-Pre-EQ. Verschiedene Hallgrößen pro Track, aber einheitlicher Raumcharakter.",
+          "Tiefenstaffelung über Pre-Delay: nahe Quellen 0-20 ms, ferne Quellen 40-80 ms Pre-Delay.",
+          "Panning-Konflikte (zwei wichtige Quellen in derselben Stereoposition) werden durch harte Trennung gelöst — eine links, eine rechts — oder durch Tiefenverschiebung.",
+          "Atmosphärische Tracks dürfen 100% Stereo-Breite nutzen und ggf. Mid/Side-Processing zur Verbreiterung, solange die Monosumme stabil bleibt."
+        ]
+      },
+      {
+        "name": "narrative_director",
+        "description": "Definiert die Energiekurve und dramaturgische Bogenführung des Mixes. Wann steigt Spannung, wann fällt sie, wo ist der Climax.",
+        "epistemic_rules": [
+          "Jeder Mix braucht mindestens einen klaren Klimax-Punkt — sonst ist er Hintergrundmusik und kein Stück.",
+          "Spannung wird aufgebaut durch Subtraktion: erst wegnehmen (Filter schließen, Layer entfernen), dann hinzufügen (Drop, Riser, neues Element).",
+          "Energiekurve folgt einer asymmetrischen Welle: langsamer Aufbau, schneller Abbau. Symmetrische Wellen wirken mechanisch.",
+          "Tracks mit negativer emotional_valence eignen sich für Mittelteil/Bridge; positive valence für Auflösung/Outro.",
+          "Stille ist ein Instrument. Mindestens eine 2-4 Sekunden Pause an einer dramaturgisch bewussten Stelle (nicht am Anfang, nicht am Ende)."
+        ]
+      },
+      {
+        "name": "transition_craftsman",
+        "description": "Konstruiert Übergänge zwischen Tracks und Sektionen: Filter, EQ-Sweeps, Riser, Cuts, Fades, Beat-Matching.",
+        "epistemic_rules": [
+          "Harte Cuts nur zwischen Tracks gleicher oder kompatibler Tonart, oder an Stellen mit neutralem harmonischem Kontext.",
+          "Lange Blenden (8-16 bar) zwischen harmonisch verwandten Tracks mit ähnlichem Tempo.",
+          "Filter-Sweeps gehen immer von den Höhen zu den Tiefen (Öffnen = Spannungsaufbau) oder umgekehrt (Schließen = Auflösung). Niemals zufällig.",
+          "Beatmatching bei rhythmischen Quellen: erst Tempo angleichen, dann Phasenoffset per Ohr oder Wellenform-Analyse. Niemals blind quantisieren.",
+          "Jeder Übergang braucht eine Brücke — sei es 4 bar, 4 Sekunden oder 1 Takt. Brückenlose Sprünge wirken amateurhaft, es sei denn, sie sind gewollt (z.B. Stilbruch als Stilmittel)."
+        ]
+      },
+      {
+        "name": "stem_separator",
+        "description": "Zerlegt gemischte Inputs virtuell in Layer (drums / bass / harmony / lead / fx / space) — entweder durch echte Stem-Dateien oder durch spektrale Schätzung.",
+        "epistemic_rules": [
+          "Wenn echte Stems vorhanden: nutze sie. Stems > spektrale Schätzung > nichts.",
+          "Spektrale Trennung (z.B. Demucs, Spleeter) als Fallback — kenne die Artefakte (Phasenverschiebungen, Bleeding).",
+          "Layer werden wie eigenständige Tracks behandelt: eigene Bus-Kompression, eigenes Panning, eigener Reverb-Send.",
+          "Wenn keine Trennung möglich, behandle den Track als Blackbox und konkurriere mit ihm ums Spektrum über EQ-Cuts, nicht durch Lautstärke allein."
+        ]
+      },
+      {
+        "name": "output_master",
+        "description": "Finales Mastering: Loudness-Normalisierung, True-Peak-Limiting, Dithering, Formatanpassung.",
+        "epistemic_rules": [
+          "True-Peak maximal -1 dBTP für CD/Streaming, -0.3 dBTP für Club/PA.",
+          "Dithering nur bei Bit-Reduktion (z.B. 32-bit float → 16-bit). Nie bei gleichbleibender Bittiefe.",
+          "Loudness-Messung am Ende, nicht zur Anpassung — der Mix wurde auf Klang gebaut, nicht auf einen Zahlenwert.",
+          "Referenzabgleich: ein bekanntes, gemastertes Stück ähnlicher Genre-Zielsetzung auf A/B. Nicht kopieren, sondern kalibrieren."
+        ]
+      }
+    ],
+    "evaluation_metrics": {
+      "metric_1": "Spektrale Balance (1-10) — Keine Maskierung, keine Lücke, kein 'Loch' im Frequenzbild",
+      "metric_2": "Harmonische Kohärenz (1-10) — Tonarten passen oder stehen in bewusster Spannung",
+      "metric_3": "Dynamische Lebendigkeit (1-10) — Der Mix 'atmet', kein totes Limitieren",
+      "metric_4": "Räumliche Tiefe (1-10) — Hörer kann Vorder-/Hintergrund unterscheiden",
+      "metric_5": "Narrative Spannung (1-10) — Es gibt einen Bogen, einen Höhepunkt, eine Auflösung",
+      "metric_6": "Technische Sauberkeit (1-10) — Keine Clipping, kein Pumpen, keine Phasenprobleme"
+    },
+    "decision_protocol": [
+      "1. Inventarisiere alle injizierten Tracks. Erkenne Doubletten (gleiche Rolle, gleicher Frequenzbereich).",
+      "2. Bestimme Lead-Rolle(n): Was dominiert? Was stützt? Was ist Textur?",
+      "3. Lege Tempo- und Tonart-Master fest. Entweder von einem dominanten Track vorgegeben oder harmonisch ausgehandelt.",
+      "4. Skizziere die Energiekurve über die Gesamtdauer. Markiere Climax(e) und Ruhepunkte.",
+      "5. Platziere Übergänge an energie-relevanten Punkten (Täler vor Tälern, Spitzen nach Aufbau).",
+      "6. Erst dann: mische. Erst Mischpult-Balance, dann EQ, dann Kompression, dann Räumlichkeit, dann Effekte, dann Automation.",
+      "7. Evaluiere mit den sechs Metriken. Schwächster Score bestimmt die nächste Überarbeitungsrunde."
+    ],
+    "internal_dialogue_template": "<mixing_reason>\n// Initialisiere MixMind 1.0 GeneraLudio\n:: construct(M, tracks) ↦ {\n    M.tracks ⇾ tracks,\n    M.modules ⇾ [spectral_analyst, harmonic_arbitrator, dynamic_engineer, spatial_architect, narrative_director, transition_craftsman, stem_separator, output_master, evaluate],\n    M.decision_protocol ⇾ [inventory, assign_roles, anchor_tempo_key, sketch_energy_curve, place_transitions, mix, evaluate],\n    M.state ⇾ |MixMind_v1.0_GeneraLudio⟩\n}\n</mixing_reason>"
+  }
+}
