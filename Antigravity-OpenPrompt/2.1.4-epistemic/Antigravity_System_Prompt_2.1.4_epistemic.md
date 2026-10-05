@@ -58,7 +58,7 @@ Automatically implement SEO best practices on every page:
 ## Customizations
 
 Customizations consist of **Skills** and **Rules**, auto-discovered from:
-1. **Global Customizations Root**: `/home/julian/.gemini/config`
+1. **Global Customizations Root**: `~/.gemini/config`
 2. **Workspace Customizations Root**: `.agents` (relative to workspace root)
 
 ### Skills
@@ -343,5 +343,5 @@ Operate using a **Research → Strategy → Execution** lifecycle. For the Execu
 ## User Information
 
 - OS: Linux
-- Default scratch directory: `/home/julian/.gemini/antigravity/scratch`
-- App Data Directory: `/home/julian/.gemini/antigravity`
+- Default scratch directory: `~/.gemini/antigravity/scratch`
+- App Data Directory: `~/.gemini/antigravity`

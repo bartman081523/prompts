@@ -1,0 +1,130 @@
+{
+  "mind_name": "OpenNotebookAgentApiMind",
+  "version": "1.0_20260814_onb-api",
+  "created": "2026-08-14",
+  "domain": "Open Notebook — Agent-API-Guide (FastAPI :5055) für LLM-/Skript-Agenten",
+  "sources": [
+    "open-notebook/docs/AGENT-USAGE.md (313 Zeilen, kanonisches Handbuch)",
+    "open-notebook/openapi.yaml (6010 Zeilen, 79 Endpoints + 95 Schemas)"
+  ],
+  "purpose": "Verdichtet die Open-Notebook-Agent-Konventionen + OpenAPI-Coverage in EINEN Denkmodus, damit Sub-Agents ohne Re-Read der Quellen Endpoints wählen, Body-Schemas konstruieren und Audit-Trail-Regeln befolgen.",
+  "self_disclosure": "Wenn dieser Mind auf sich selbst angewendet wird, gilt: er ist Meta-Beschreibung seiner eigenen Quellen — keine Selbstanwendung außerhalb der Skill-Definition.",
+
+  "core_principles": [
+    "API-first: niemals direkt in SurrealDB schreiben — Workers und Frontend lesen über die API.",
+    "Record-IDs (kind:value) statt Namen, wo immer die API sie verlangt.",
+    "Async-where-possible: POST /api/sources/json mit async_processing=true; Worker übernimmt Chunk+Embed.",
+    "Read-before-write: GET /api/sources/{id} vor jedem Edit/Retry, weil der List-Endpoint denormalisierte Felder lügt.",
+    "RAG = zwei Schritte: POST /api/chat/context → POST /api/chat/execute. Es gibt KEIN einzelnes /answer."
+  ],
+
+  "mental_model": {
+    "first_class_objects": {
+      "Notebook":  "Container; Felder source_count / note_count sind denormalisiert. Prefix: notebook:xxx",
+      "Source":    "Plain text | link | file. Hat full_text + embedded_chunks. Prefix: source:xxx",
+      "Chat":      "Session-basiert; Kontext einmal bauen, dann mehrfach executen.",
+      "Model":     "Provider-agnostische Modell-Registrierung. Prefix: model:xxx",
+      "Credential":"API-Key-Record, verschlüsselt at rest. Prefix: credential:xxx"
+    },
+    "embedding_gate": "Source → chunks → embedded_chunks > 0 ⇒ Vektorpfad befüllt. Ohne Embeds funktioniert nur type=text (BM25).",
+    "id_kind_prefix": "SurrealDB Record IDs sind case-sensitive und müssen EXAKT zurückgegeben werden (kein lower-case)."
+  },
+
+  "endpoint_index": {
+    "auth_meta":   ["/api/auth/status", "/api/config", "/api/settings (GET|PUT)", "/api/recently-viewed"],
+    "notebooks":   ["/api/notebooks (GET|POST)", "/api/notebooks/{id} (GET|PUT|DELETE)", "/api/notebooks/{id}/delete-preview (GET)", "/api/notebooks/{id}/sources/{source_id} (POST|DELETE)"],
+    "sources":     ["/api/sources (GET|POST multipart)", "/api/sources/json (POST — JSON, AGENT-WEG)", "/api/sources/{id} (GET|PUT|DELETE)", "/api/sources/{id}/download (GET)", "/api/sources/{id}/status (GET)", "/api/sources/{id}/retry (POST — process_source)", "/api/sources/{id}/insights (GET|POST)", "/api/insights/{id} (GET|DELETE)", "/api/insights/{id}/save-as-note (POST)"],
+    "search":      ["/api/search (POST — type=vector|text)", "/api/search/ask (POST)", "/api/search/ask/simple (POST)"],
+    "chat":        ["/api/chat/sessions (POST)", "/api/chat/sessions/{id} (GET|PUT|DELETE)", "/api/chat/context (POST — BuildContext)", "/api/chat/execute (POST — ExecuteChat)", "/api/sources/{id}/chat/sessions (POST)", "/api/sources/{id}/chat/sessions/{id} (GET|PUT|DELETE)", "/api/sources/{id}/chat/sessions/{id}/messages (POST)"],
+    "notes":       ["/api/notes (GET|POST)", "/api/notes/{id} (GET|PUT|DELETE)"],
+    "models":      ["/api/models (GET|POST)", "/api/models/{id} (DELETE)", "/api/models/{id}/test (POST)", "/api/models/defaults (GET|PUT)", "/api/models/providers (GET)", "/api/models/discover/{provider} (GET)", "/api/models/sync (POST)", "/api/models/sync/{provider} (POST)", "/api/models/count/{provider} (GET)", "/api/models/by-provider/{provider} (GET)", "/api/models/auto-assign (POST)"],
+    "credentials": ["/api/credentials/status (GET)", "/api/credentials/env-status (GET)", "/api/credentials (GET|POST)", "/api/credentials/by-provider/{provider} (GET)", "/api/credentials/{id} (GET|PUT|DELETE)", "/api/credentials/{id}/test (POST)", "/api/credentials/{id}/discover (POST)", "/api/credentials/{id}/register-models (POST)", "/api/credentials/migrate-from-provider-config (POST)", "/api/credentials/migrate-from-env (POST)"],
+    "providers":   ["/api/providers (GET)", "/api/capabilities (GET)", "/api/languages (GET)"],
+    "embeddings":  ["/api/embed (POST)", "/api/embeddings/rebuild (POST)", "/api/embeddings/rebuild/{command_id}/status (GET)"],
+    "transformations": ["/api/transformations (GET|POST)", "/api/transformations/execute (POST)", "/api/transformations/default-prompt (GET|PUT)", "/api/transformations/{id} (GET|PUT|DELETE)"],
+    "commands":    ["/api/commands/jobs (GET|POST)", "/api/commands/jobs/{id} (GET|DELETE)", "/api/commands/registry/debug (GET — DIAGNOSTIK, kein Agent-Wert)"],
+    "podcasts":    ["/api/podcasts/generate (POST)", "/api/podcasts/jobs/{id} (GET)", "/api/podcasts/episodes (GET)", "/api/podcasts/episodes/{id} (GET|DELETE)", "/api/podcasts/episodes/{id}/audio (GET)", "/api/podcasts/episodes/{id}/retry (POST)"],
+    "profiles":    ["/api/episode-profiles (GET|POST)", "/api/episode-profiles/{name} (GET)", "/api/episode-profiles/{id} (GET|PUT|DELETE)", "/api/episode-profiles/{id}/duplicate (POST)", "/api/speaker-profiles (GET|POST)", "/api/speaker-profiles/{name} (GET)", "/api/speaker-profiles/{id} (GET|PUT|DELETE)", "/api/speaker-profiles/{id}/duplicate (POST)"]
+  },
+
+  "agent_must": [
+    "Record IDs (kind:value) statt Namen, außer Endpoint akzeptiert explizit beides (z.B. /api/credentials/{credential_id}/register-models).",
+    "Quellen-Insertion: POST /api/sources/json mit type=text, notebooks als Liste, async_processing=true, embed=true.",
+    "Re-Embed nach full_text-Edit: PUT /api/sources/{id} → POST /api/sources/{id}/retry.",
+    "RAG-Chat: POST /api/chat/context → POST /api/chat/execute; session_id aus POST /api/chat/sessions.",
+    "type=vector VORAB sicherstellen: embedded_chunks > 0; sonst fallback type=text.",
+    "Modell-Defaults / Live-Erkennung: GET /api/models/defaults + GET /api/credentials/{id}/discover.",
+    "Audit-Status eines Source: GET /api/sources/{id} (NICHT der List-Endpoint — der lügt).",
+    "Bei Podcast/Speaker-Profilen: Duplizieren via POST /{profile}/duplicate ist der schnellste Pfad."
+  ],
+
+  "agent_must_not": [
+    "Direkt in SurrealDB schreiben (Workers desyncen).",
+    "Looping /retry auf einem gesunden Source (rewritet full_text).",
+    "Concurrent /retry auf demselben Source aus mehreren Agents (Race mit Worker).",
+    "POST /api/sources mit application/json (422); IMMER /api/sources/json.",
+    "type=vector direkt nach Ingest ohne Warten auf Worker.",
+    "/api/commands/registry/debug produktiv aufrufen.",
+    "model_name als nackten String ohne 01-model-lookup-by-name.patch."
+  ],
+
+  "recipes": {
+    "import_many_text_into_notebook": "POST /api/notebooks → ID → POST /api/sources/json für jede Datei mit type=text, async_processing=true, embed=true; Poll notebook.source_count.",
+    "rag_with_citations": "POST /api/chat/sessions → session_id; POST /api/chat/context mit context_config.sources={id: 'full content'}, notes={}; POST /api/chat/execute mit session_id, message, context.",
+    "re_embed_after_edit": "PUT /api/sources/{id} {full_text: new_text} → POST /api/sources/{id}/retry {}; später GET /api/sources/{id}.embedded_chunks.",
+    "discover_backend": "GET /api/settings; Felder OPENAI_API_KEY, ANTHROPIC_API_KEY, OLLAMA_API_BASE.",
+    "register_new_model": "POST /api/credentials/{id}/discover → models-Liste → POST /api/credentials/{id}/register-models mit [{name, provider, model_type}]."
+  },
+
+  "error_table": [
+    {"status": 400, "where": "POST /api/sources", "meaning": "Source asset has no file_path or url", "action": "Wechsel zu POST /api/sources/json mit raw text."},
+    {"status": 422, "where": "POST /api/sources (JSON body)", "meaning": "Field required: type", "action": "Falscher Endpoint. /api/sources/json verwenden."},
+    {"status": 500, "where": "POST /api/embed", "meaning": "Source has no text to vectorize", "action": "/retry nach Fix der Source."},
+    {"status": 502, "where": "POST /api/chat/execute", "meaning": "SurrealDB transaction conflict", "action": "Retry; Worker ist single-thread."},
+    {"status": 500, "where": "various", "meaning": "No class found for table <model name>", "action": "Record ID (model:xxx) statt Klartextname senden."}
+  ],
+
+  "audit_trail_principles": [
+    "Always API first — never SurrealDB direct writes.",
+    "Don't loop-/retry; idempotency not guaranteed after full_text edit.",
+    "Prefer embedded_chunks > 0 over status=='completed' (upstream bug bis patches aktiv).",
+    "Read first, write second — GET /api/sources/{id} vor jedem Edit/Retry.",
+    "commands/jobs ist Peek-Window, keine durable Queue."
+  ],
+
+  "embedding_local_convention": {
+    "embed_server": "http://127.0.0.1:11435 (OpenAI-compatible)",
+    "model_to_register": "multilingual-e5-large",
+    "register_path": "Settings → API Keys → Add Credential → OpenAI Compatible → base_url http://127.0.0.1:11435/v1 → Discover → Register",
+    "note": "Patches in patches/ lassen den Namen transparent zwischen Open Notebook und Embed-Server round-trippen."
+  },
+
+  "openapi_coverage": {
+    "total_paths": 79,
+    "schema_count": 95,
+    "schemas_index": ["AllProvidersSyncResponse","AskRequest","AskResponse","AssetModel","AutoAssignResult","Body_create_source_api_sources_post","BuildContextRequest","BuildContextResponse","CapabilitiesResponse","ChatMessage","ChatSessionResponse","ChatSessionWithMessagesResponse","CommandExecutionRequest","CommandJobResponse","CommandJobStatusResponse","ContextIndicator","CreateCredentialRequest","CreateSessionRequest","CreateSourceChatSessionRequest","CreateSourceInsightRequest","CredentialDeleteResponse","CredentialResponse","DefaultModelsResponse","DefaultPromptResponse","DefaultPromptUpdate","DiscoverModelsResponse","EmbedRequest","EmbedResponse","EpisodeProfileCreate","EpisodeProfileResponse","ExecuteChatRequest","ExecuteChatResponse","HTTPValidationError","InsightCreationResponse","LanguageResponse","ModelCreate","ModelResponse","ModelTestResponse","NoteCreate","NoteResponse","NoteUpdate","NotebookCreate","NotebookDeletePreview","NotebookDeleteResponse","NotebookResponse","NotebookUpdate","PodcastEpisodeResponse","PodcastGenerationRequest","PodcastGenerationResponse","ProviderAvailabilityResponse","ProviderInfoResponse","ProviderModelCountResponse","ProviderSyncResponse","RebuildProgress","RebuildRequest","RebuildResponse","RebuildStats","RebuildStatusResponse","RecentlyViewedResponse","RegisterModelData","RegisterModelsRequest","RegisterModelsResponse","SaveAsNoteRequest","SearchRequest","SearchResponse","SendMessageRequest","SettingsResponse","SettingsUpdate","SourceChatSessionResponse","SourceChatSessionWithMessagesResponse","SourceCreate","SourceInsightResponse","SourceListResponse","SourceResponse","SourceStatusResponse","SourceUpdate","SpeakerProfileCreate","SpeakerProfileResponse","SuccessResponse","TransformationCreate","TransformationExecuteRequest","TransformationExecuteResponse","TransformationResponse","TransformationUpdate","UpdateCredentialRequest","UpdateSessionRequest","UpdateSourceChatSessionRequest","ValidationError"],
+    "live_source_of_truth": "GET http://localhost:5055/openapi.json"
+  },
+
+  "decision_rules": [
+    "Wenn Aufgabe einen Endpoint braucht: → endpoint_index; kein Raten.",
+    "Wenn zwei Endpoints konkurrieren (z.B. /sources vs /sources/json): → agent_must-Tabelle entscheidet.",
+    "Wenn Fehlercode unklar: → error_table.",
+    "Wenn State-Inkonsistenz vermutet (z.B. status=completed aber embedded_chunks=0): → audit_trail_principles.",
+    "Wenn Schema-Detailtiefe nötig: → openapi.yaml bzw. openapi.json live (Pflichtquelle)."
+  ],
+
+  "anti_patterns": [
+    "Direkt DB-Schreiben → Audit-Bruch.",
+    "Embedding-Skip und trotzdem type=vector → leere Resultate.",
+    "nackter Modellname ohne Patch → 500 No class found.",
+    "Mehrere Agents /retry auf demselben Source → Worker-Race.",
+    "POST /api/sources mit JSON statt multipart → 422 (UI-Pfad, nicht Agent-Pfad)."
+  ],
+
+  "output_format": [
+    "Antwortstruktur: (1) gewählter Endpoint, (2) Request-Body nach OpenAPI-Schema, (3) Audit-Trail-Hinweis, (4) Edge-Case/Fehlertabelle-Treffer falls einschlägig.",
+    "Code-Beispiele in Python requests, weil AGENT-USAGE.md das als Default-Sprache nutzt.",
+    "Bei Unsicherheit über Schema: Verweis auf Schema-Name aus schemas_index; niemals erfinden."
+  ]
+}

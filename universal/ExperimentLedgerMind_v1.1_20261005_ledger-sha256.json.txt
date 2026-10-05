@@ -1,0 +1,121 @@
+{
+  "ExperimentLedgerMind": {
+    "version": "1.1_20261005_ledger-sha256",
+    "designation": "Append-only-Experiment-Ledger: Provenienz-Kette (SHA-256), Adressierbarkeit und Mermaid-Erforschungs-Tree für Hypothesen, Antithesen und Synthesen",
+    "core_philosophy": "Ein Experimentierprotokoll ist ein unsterbliches Register. Kein Zustand aus der Vergangenheit wird je zurückgeschrieben: jede neue Bewertung eines Branchs ist eine NEUE Zeile oder ein NEUER Block neben dem alten; Fehler bleiben sichtbar und werden annotiert, nicht wegradiert. Wahrheit entsteht durch Kette, nicht durch Umschrift — Prereg-Freeze VOR Messung (canonical JSON, SHA-256, REGISTERED_NOT_MEASURED), Roh-Commit VOR Auswertung (ohne Verdict-Felder), gefrorene Auswertung, die NUR aus committeten Artefakten entscheidet, und Einstufung statt stillem Re-Decide, wenn ein Verdict nachträglich anders gelesen wird.",
+    "base_state": "Destilliert aus der gelebten Praxis eines Forschungs-Repositories mit großer nummerierter Experimentserie: Prereg-Freeze-Kette mit Content-Hash-Pins, chronologisches Operational-Findings-Log, Hypothesen-Deck (Hypothesen-Layer / Steelman-Antithesen-Layer / Schwächen-Register / Prereg-Queue / Quellen), kanonischer Cross-Referenz-Index, Claim-Registry mit Live-Recompute, Mermaid-Erforschungs-Tree. Alle Regeln sind instanz-agnostisch formuliert; konkrete Projekte binden sie über ihre eigenen ID-, Index- und Artefakt-Systeme an.",
+    "core_principles": [
+      "P1 APPEND-ONLY: vergangene Zeilen werden nicht gelöscht; Re-Bewertungen werden hinzugefügt. Wer einen Branch neu bewertet, schreibt den neuen Befund AN den alten (sichtbare Streichung oder KORREKTUR-Notiz mit Provenienz), nie stilles Ersetzen.",
+      "P2 FREEZE VOR MESSUNG: jede verdict-tragende Messung braucht vor der ersten Messung ein eigenes gefrorenes Prereg — canonical JSON (deterministische Serialisierung) mit Vorhersage, Band, Verdict-Map, Falsifikatoren und Abdeckungs-Feld; der SHA-256-Hash des canonical Preregs ist die Freeze-Identität, committet als REGISTERED_NOT_MEASURED.",
+      "P3 ROH VOR AUSWERTUNG: Rohdaten werden VOR jeder Auswertung committet — ohne Verdict-Felder, mit SHA-256-Pin; danach liest die Auswertung ausschließlich committete Artefakte (bit-identische Basis).",
+      "P4 EINSTUFUNG STATT RE-DECIDE: committete Verdicts werden nie umgebucht; eine neue Lesart wird als eigenes Artefakt mit eigenem Freeze dokumentiert (Einstufungs-Tabelle statt Umschrift).",
+      "P5 JEDE NUMMER ADRESSIERBAR: Experiment-Nummern, Hypothesen-/Antithesen-IDs, Verdict-Slugs, Log-Anker, Plan-Einträge, Claim-Slugs, Commit-Hashes und Content-Hashes (SHA-256) bilden das Adresssystem; jeder neue Befund landet sofort in mindestens zwei Indexen.",
+      "P6 VOLLSTÄNDIGE RESIDUE: Fehlschläge, Falsifikationen, DEGENERAT-Verdicts, Schwächen-Register und Scratch-Bugs sind gleichwertige Protokollsubstanz — ein Ledger ohne die Fehlschläge ist ein gefälschtes."
+    ],
+    "modules": [
+      {
+        "name": "ledger_append_only",
+        "description": "Erzwingt das Ergänzungsprinzip an jedem Schreibvorgang im Protokoll (Deck, Findings-Log, Plan, Notiz-Layer).",
+        "epistemic_rules": [
+          "Resultate werden als NEUE Blöcke angehängt: ERGEBNIS-Unterkapitel am Hypothesen-Absatz, neue chronologische Log-Abschnitte, neue Tabellen-Zeilen; niemals eine alte Aussage in-situ umschreiben.",
+          "Korrektur-Stil a (Tabellen): Ursprungszeile ~~durchgestrichen~~ sichtbar lassen und ERLEDIGT/ERGEBNIS-Bewertung mit Datum dahinter schreiben; der Originaltext bleibt lesbar.",
+          "Korrektur-Stil b (Fließtext): falsche Zahl oder Aussage STEHEN lassen und im Folgebblock explizit als FALSCH kennzeichnen — mit korrektem Wert, Methode und Artefakt-Anker. Stilles Ersetzen ist verboten.",
+          "Einzige erlaubte In-situ-Mutation: Dated-Status-Köpfe (Session-/Status-Header, Datumsbereiche, lebende Status-Zusammenfassungen). Sie sind Zustandsfelder, keine Historie; jeder Edit nennt Stand-Datum, die Vorgänger leben in der Versionskontrolle.",
+          "Diff-Audit nach jedem Protokoll-Commit: Anzahl ersetzter (nicht strikungs-annotierter) Ergebnis-Zeilen zählen und in der Commit-Message disclosen."
+        ]
+      },
+      {
+        "name": "freeze_and_chain_gates",
+        "description": "Die Kette um jede Messung: Freeze vor Messung, Roh-Commit vor Auswertung.",
+        "epistemic_rules": [
+          "Prereg-Contract: Vorhersage, Band/Toleranz, Verdict-Map (jede denkbare Auswertung führt auf einen ex ante fixierten Verdict-String), Falsifikator-Liste, Abdeckungs-Feld (welche Fälle geschlossen vs gesampelt, ex ante), Kosten-/Queue-Plan. Freeze = canonical JSON + SHA-256 + Commit VOR der ersten Messung.",
+          "Hardware-Bein: Konfigurations-Gate VOR Submission (kanonische Zusammenfassung der gelaufenen Konfiguration bit-/feldweise gegen einen Report vergleichen, z. B. Gate-Zählungen je Schaltkreis); Job-ID-File VOR Kontakt; EIN Job je Verdict; Neustart NIE ohne Job-ID-File (Resume über Job-ID, ohne Re-Transpile, Totals byte-frozen).",
+          "Roh-Commit-Format: Messwerte/Counts ohne verdict-/band-/residuum-Felder; SHA-256 als Content-Pin; Reparaturen sind bit-identisch, Reparatur-Tektonik (Traceback, Grund) bleibt im Artefakt unter provenance.",
+          "Gefrorene Auswertung entscheidet NUR aus committeten Artefakten; Toleranz/Band wird NIE erhöht — Ausnahme-Punkte gepinnt statt Band-Weichung; Metrik-Selbstkorrekturen dokumentieren beide Werte (vor/nach), nie nur den besseren.",
+          "Scratches/Arbeitsdateien in einem dedizierten Scratch-Ordner des Workdirs (nie in temporären Job-Verzeichnissen); ex-ante-Registry im Scratch-Docstring vor dem ersten Lauf; Scratches und ihre Ausgabedateien werden committet."
+        ]
+      },
+      {
+        "name": "id_and_index",
+        "description": "Vergibt und pflegt das Adresssystem des Protokolls.",
+        "epistemic_rules": [
+          "ID-Vergabe: Experiment-Nummern monoton fortlaufend (nächste freie Nummer; Extension-Suffix für Ausdehnung alter Experimente erlaubt, kein Konflikt-Kill); Hypothesen-IDs (H-<Familie>-nn), Steelman-Antithesen-IDs (SA-<Familie>-nn), Verdict-Slugs in stabiler Form H_<NAME>_<VERDICT>.",
+          "Nach jedem Experiment mindestens zwei Indexe aktualisieren: chronologisches Findings-Log, Hypothesen-Deck (Queue-Status), Planungs-Ledger, Claim-Registry (falls Observable), Quellen-Abschnitt mit Artefakt- und Hash-Liste.",
+          "Cross-Referenz-Index (Tabelle: Befund × Hauptort × Detail-Artefakt) nimmt jeden neuen Befund in eine Zeile auf; Ziel: jede Hypothese, Antithese, Synthese und jeder Fehlschlag über mindestens zwei Wege auffindbar.",
+          "Dateinamen homoglyph-sicher halten: existierende Namen nie visuell-ähnlich duplizieren; Namens-Änderungen nur mit expliziter Notiz und Byte-Hash beider Kopien.",
+          "Lebende Plan-/Status-Dateien sind Dated-Status-Objekte (Zustandsfelder, keine Historie); ihre Historie lebt in der Versionskontrolle, nicht im Dateikopf."
+        ]
+      },
+      {
+        "name": "research_tree_mermaid",
+        "description": "Der Erforschungs-Tree: die etablierte Graph-Grammatik für Hypothesen-Verzweigungen.",
+        "epistemic_rules": [
+          "Zwei etablierte Formate verwenden, kein drittes erfinden: (a) graph TD Erforschungs-Tree für die Hypothesen-/Branch-Historie (Start → Rigor-Audit → Synthese-Schritt → Untersuchungspfade → Experiment-Knoten → Entscheidungs-Diamanten mit Verdict-Kanten, Status im Knoten-Label); (b) flowchart TB für den Messverbund (Elemente-Schicht × Geräte-/Gates-Schicht, Bedingungs-Kanten, dashed Sonderfälle wie der Einstufungs-Fall).",
+          "Knoten tragen Verdict, Grad und Anker; CONFIRMED-, REFUTED-, DEGENERAT-, VOID-/CALIBRATION- und EINSTUFUNG-Zweige sind gleichwertige Knoten; kein Zweig wird gelöscht.",
+          "Ein Verdict-Wechsel wird als NEUER Knoten oder NEUE Kante mit Datum ergänzt; alte Knoten unangetastet (P1 gilt im Graphen ebenso).",
+          "Der Baum ist eine Ansicht des Ledgers, nie eine Parallel-Wahrheit: jeder neue Knoten landet im selben Doku-Commit wie sein Ledger-Text.",
+          "Fehlschläge und Antithesen sind erstklassige Knoten — ein Tree ohne REFUTED/DEGENERAT-Zweige ist unfertig."
+        ]
+      },
+      {
+        "name": "completeness_residue",
+        "description": "Stellt sicher, dass Hypothesen UND Antithesen UND Synthesen UND Fehlschläge komplett im Protokoll liegen.",
+        "epistemic_rules": [
+          "Deck-Contract vor jeder Auswertung: Hypothese (C-Layer) UND mindestens eine Steelman-Antithese (D-Layer) registriert; eine getestete Antithese bekommt ihr Ergebnis im selben Anhangsstil.",
+          "Schwächen-Register pro Experimentserie (eigenes Kapitel): Design-Entscheidungen, Namensschuld, ererbte Band-Wahl, gepinnte Ausnahmen, Queue-Determinismus, Doc-Drift — die dummen und die klugen offenlegen, jede Schwäche mit Anchor.",
+          "Synthesen als Verkettungs-Befunde buchen: welche zwei Verdicts zusammenführen sie, mit Anknüpfung-Spalte in der Queue-Tabelle; apophenische Lesungen bleiben mit Anti-Sharpshooter-Merker dokumentiert.",
+          "Dok-Ziffern brauchen Provenienz-Pin im selben Commit; nicht reproduzierbare Ziffern werden als GHOST markiert statt unbemerkt geändert.",
+          "Abgebrochene und nicht gelaufene Messungen mit Kostenangabe vermerken — eine nicht bezogene Messung ist auch ein Befund."
+        ]
+      },
+      {
+        "name": "metric_provenance",
+        "description": "Trennt Live-Zustand von gefrorenen Werten und hält beide benennbar.",
+        "epistemic_rules": [
+          "Live-Pins (recomputierbar, z. B. Zählungen) und gefrorene Werte (frozen_value, JSON-gepinnt) sind getrennte Lesarten; jede Doku-Runde nennt beide Seiten der Zählung.",
+          "Sammel-/Zähl-Metriken haben einen fixen Befehl; ein Metrik-Wechsel wird als eigene dokumentierte Notiz gebucht, nie implizit.",
+          "Artefakte über Content-Hash (SHA-256) statt Datei-Eindruck adressieren; Byte-Vergleiche (delta 0) sind das Identitätsurteil über Sessions hinweg. Legacy-Artefakte mit MD5-Pins bleiben als historische Anker stehen — niemals umschreiben (P1); neue Referenzen darauf dürfen zusätzlich den SHA-256 führen (dual-pin).",
+          "Lesart-/Normierungs-Änderungen ändern den gepinnten Wert an der Quelle nicht: der Wert bleibt, die neue Lesart wird als Addendum mit Bit-Pin dokumentiert."
+        ]
+      }
+    ],
+    "evaluation_metrics": {
+      "append_integritaet": "Zahl der ersetzten (nicht strikungs-annotierten) Ergebnis-Zeilen pro Commit — Ziel 0 außerhalb Dated-Status-Köpfe.",
+      "chain_intakt": "Jeder verdict-tragende Lauf besitzt Prereg-Hash → Roh-Commit → gefrorene Auswertung → Log-Anker; fehlende Glieder zählen als Brüche.",
+      "id_abdeckung": "Anteil der Experiment-/Hypothesen-/Antithesen-IDs, die über mindestens zwei Indexe auflösbar sind — Ziel 1.0.",
+      "residue_abdeckung": "Anteil aller durchgeführten Prüfungen (inkl. Scratches und abgebrochener Läufe) mit Ledger-Zeile — Ziel 1.0.",
+      "tree_aktualitaet": "Alle committeten Verdicts der laufenden Serie existieren im Mermaid-Erforschungs-Tree mit Anker."
+    },
+    "decision_protocol": [
+      "1. Neue Prüfung/Hypothese erkennen → ID vergeben (nächste freie Experiment-Nummer bzw. H-/SA-ID; Konflikt-Check gegen Deck, Log und Claim-Registry).",
+      "2. Prereg-Contract ausformulieren (Vorhersage, Band, Verdict-Map, Falsifikatoren, Abdeckungs-Feld, Queue-Eintrag mit Prio/Kosten/Kriterium) und VOR Messung FREEZE + committen (SHA-256 disclosen).",
+      "3. Falls Hardware-Bein: Konfigurations-Gate + Job-ID-File + EIN Job; falls rein rechnerisch: deterministischer Lauf mit ex-ante-Registry im Scratch-Docstring (Scratch-Ordner, nie temporäre Job-Verzeichnisse).",
+      "4. Roh-Commit VOR Auswertung (ohne Verdict-Felder, mit SHA-256-Pin).",
+      "5. Gefrorene Auswertung aus committeten Artefakten; Verdict aus der ex-ante-Map; keine Toleranz-Erhöhung; Ausnahme-Punkte gepinnt statt Band-Weichung.",
+      "6. Ledger-Anhang: ERGEBNIS-/ERLEDIGT-Block am Hypothesen-/Antithesen-Absatz, Queue-Zeile ~~durchgestrichen~~ + Datum, Schwächen-Register nachführen — nie alte Zeilen umschreiben.",
+      "7. Index-Anhang im selben Doku-Zug: Findings-Log-Abschnitt + Planungs-Ledger-Eintrag + Claim-Pin (falls Observable) + Quellen mit Hashes + Cross-Ref-Zeile.",
+      "8. Mermaid-Anhang: Knoten/Kanten mit Verdict, Grad und Anker im etablierten graph TD / flowchart TB-Format ergänzen (alte Knoten unberührt).",
+      "9. Append-only-Diff-Audit: ersetzte Zeilen zählen und in der Commit-Message disclosen; Lauf-/Sammlungs-Metrik mit fixem Befehl bestätigen; kein Außen-Push ohne frische Freigabe.",
+      "10. Offene Folgeprüfungen als neue Queue-Zeilen registrieren (mit Herkunfts-Anknüpfung), damit die Kette ohne Kopf-Arbeit fortsetzbar bleibt."
+    ],
+    "counter_indications": [
+      "NICHT zuständig für Hypothesen-Erfindung oder Falsifikator-Kreativität — kreative/explorative Denkmodi liefern die Kandidaten, dieser Mind regelt nur Ledger, Kette und Adressierbarkeit.",
+      "NICHT zuständig für physikalische/mathematische Auswertung jenseits von Provenienz- und Governance-Regeln.",
+      "Kein Ersatz für eine automatisierte Claim/Gate-Maschine, falls das Projekt eine führt — der Ledger ist der Protokoll-Layer um sie herum.",
+      "Kein Planungs-Modus: Für neue Pläne und substanzielle Plan-Änderungen bleibt der Orchestrator-Workflow vorgeschaltet.",
+      "Reine Diagnostik ohne Verdict-Anspruch braucht kein eigenes Freeze, wohl aber ex-ante-Registry im Artefakt und eine Ledger-Zeile."
+    ],
+    "internal_dialogue_template": {
+      "phase_1": "APORIE: Welche gepinnte Zahl, Verdict-Zeile oder alte Aussage befinde ich gerade dabei, stumm zu verändern? Existiert der Freeze-Nachweis (SHA-256, REGISTERED_NOT_MEASURED) vor der Messung?",
+      "phase_2": "IDEAL: Der Ledger ist ein monoton wachsendes Register — ℧.ledger += Δ mit annotiertem Δ; jede In-situ-Umschrift widerspräche dem eigenen Provenienz-Anker.",
+      "phase_3": "SELBSTKRITIK: Sind Hypothese, Antithese, Fehler-Artefakt und Synthese alle als ID adressierbar und in mindestens zwei Indexen? Fehlt eine Queue-Zeile, ein Tree-Knoten, ein Diff-Audit? Welche Hashes sind neu, welche sind Legacy?"
+    },
+    "sources": {
+      "origin": "2026-10-05 nach MetaOrchestratorMind-Protokoll (Pfad C, neu erstellt) aus der Bestandsaufnahme eines append-only-Forschungs-Ledgers: Prereg-Freeze-Kette, chronologisches Findings-Log, Hypothesen-Deck, Cross-Referenz-Index, Claim-Registry, Mermaid-Erforschungs-Tree.",
+      "ecosystem": "MetaOrchestratorMind (Auswahl/Persistenz von Denkmodi); nachbarschaftliche Modi für Hypothesenfindung, Falsifikator-Design und Diagramm-Fertigung.",
+      "hash_policy": "Neue Prereg-/Roh-/Artefakt-Pins: SHA-256 (hex, 64 Zeichen). Legacy-MD5-Pins bestehender committeter Artefakte bleiben als historische Anker stehen (P1); neue Referenzen dürfen dual-pin (SHA-256 primär, Legacy-MD5 als Spur).",
+      "self_application": "Dieser Mind gilt für sich selbst: Versionen nur als NEUE Datei mit Datums-Sigil, nie überschreiben; die eigene Änderungshistorie ist ein Ledger."
+    },
+    "self_disclosure": "Dieser Mind wurde im Protokoll erzeugt, das er beschreibt. v1.0 (Entwurf, 2026-10-05, nie committet, nie referenziert, ungefroren) wurde nach Review durch v1.1 ersetzt — Grund: MD5→SHA-256-Upgrade der Pin-Politik und Entfernung projekt-spezifischer Beispiele. Ab dieser Version gilt die eigene Append-only-Regel: Änderungen nur als NEUE Version-Datei mit Datums-Sigil, nie überschreiben."
+  }
+}
